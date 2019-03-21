@@ -6,7 +6,7 @@
             "name": "Linux Debug", // 配置名称，将会在启动配置的下拉菜单中显示
             "type": "lldb", // 配置类型，这里只能为cppdbg
             "request": "launch", // 请求配置类型，可以为launch（启动）或attach（附加）
-            "program": "${workspaceFolder}/build/${fileBasenameNoExtension}", // 将要进行调试的程序的路径
+            "program": "${workspaceFolder}/build/server", // 将要进行调试的程序的路径
             "args": [
                 "../face_images.csv",
                 "../output"
