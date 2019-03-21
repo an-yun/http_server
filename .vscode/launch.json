@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Linux Debug", // 配置名称，将会在启动配置的下拉菜单中显示
+            "type": "lldb", // 配置类型，这里只能为cppdbg
+            "request": "launch", // 请求配置类型，可以为launch（启动）或attach（附加）
+            "program": "${workspaceFolder}/build/${fileBasenameNoExtension}", // 将要进行调试的程序的路径
+            "args": [
+                "../face_images.csv",
+                "../output"
+            ], // 程序调试时传递给程序的命令行参数，一般设为空即可
+            "cwd": "${workspaceFolder}/build", // 调试程序时的工作目录
+            "terminal": "integrated",
+            "stopOnEntry": false,
+            "preLaunchTask": "Linux Compile" // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应,
+            
+        },
+        {
+            "name": "Windows Debug",
+            "type": "gdb",
+            "request": "launch",
+            "target": "${workspaceFolder}/build/${fileBasenameNoExtension}.exe",
+            "cwd": "${workspaceFolder}/build",
+            "arguments": "",
+            "preLaunchTask": "Windows Compile",
+            "valuesFormatting": "prettyPrinters",
+            "terminal": ""
+        },
+    ]
+}
