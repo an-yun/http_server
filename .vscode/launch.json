@@ -8,7 +8,7 @@
             "request": "launch", // 请求配置类型，可以为launch（启动）或attach（附加）
             "program": "${workspaceFolder}/build/server", // 将要进行调试的程序的路径
             "args": [
-                "www",
+                "web",
                 "8080"
             ], // 程序调试时传递给程序的命令行参数，一般设为空即可
             "cwd": "${workspaceFolder}/build", // 调试程序时的工作目录

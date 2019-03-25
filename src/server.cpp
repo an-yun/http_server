@@ -9,6 +9,13 @@
 
 int main(int argc, char *argv[])
 {
-    printf("test include");
+    if(argc > 2)
+    {
+        int port = atoi(argv[2]);
+    }
+    else
+    {
+        printf("usage: server");
+    }
     return 0;
 }
