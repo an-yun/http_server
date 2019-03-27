@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "server.h"
 
 int st = -1;
 int client_st = -1;
