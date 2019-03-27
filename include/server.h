@@ -72,7 +72,7 @@ void Server::catch_signal(int sign)
     switch (sign)
     {
     case SIGINT:
-        printf("signal SIGINT\n");
+    case SIGTERM:
         for(auto s:all_servers)
             s->close();
         printf("all server closed\n");
@@ -83,13 +83,6 @@ void Server::catch_signal(int sign)
         break;
     case SIGALRM:
         //printf("signal SIGALRM\n");
-        break;
-    case SIGTERM:
-        printf("signal SIGTERM\n");
-        for(auto s:all_servers)
-            s->close();
-        printf("all server closed\n");
-        exit(0);
         break;
     default:
         break;
