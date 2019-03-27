@@ -9,7 +9,8 @@ LDLIBS=$(LDDIR) #-l xxxlib
 BUILDDIR=$(ROOT)/build
 BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
-CXXFLAGS=-std=c++17 -I$(ROOT)/include -Wall -g
+INLCUDEDIR=$(ROOT)/include
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g
 
 #源代码
 SRCSFILES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
@@ -24,5 +25,5 @@ run:$(BINDIR)/http_server
 	@echo ================run================
 	@$(BINDIR)/http_server
 
-$(OBJS):$(BUILDDIR)/%.o:$(SRCDIR)/%.cpp
+$(OBJS):$(BUILDDIR)/%.o:$(SRCDIR)/%.cpp $(INLCUDEDIR)/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@

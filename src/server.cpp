@@ -13,11 +13,12 @@
 int st = -1;
 int client_st = -1;
 
-void catch_Signal(int Sign);
-int signal1(int signo, void (*func)(int));
 
 int main(int argc, char *argv[])
 {
+    Server server;
+    signal(SIGINT, Server::catch_signal);  //捕捉SIGINT信号
+    signal(SIGTERM, Server::catch_signal); //捕捉SIGTERM信号
     if (argc > 2)
     {
         int port = atoi(argv[2]);             // 解析端口
@@ -34,8 +35,8 @@ int main(int argc, char *argv[])
         //监听客户端连接
         if (listen(st, 8) == -1)
             printf("listen error:%s(error: %d)\n", strerror(errno), errno);
-        signal1(SIGINT, catch_Signal);  //捕捉SIGINT信号
-        signal1(SIGTERM, catch_Signal); //捕捉SIGTERM信号
+        // signal1(SIGINT, catch_Signal);  //捕捉SIGINT信号
+        // signal1(SIGTERM, catch_Signal); //捕捉SIGTERM信号
         const size_t MAX_LEN = 2048;
         char buff[MAX_LEN];
         //客户端连接地址和连接标示
@@ -91,7 +92,6 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-
 void catch_Signal(int Sign)
 {
     switch (Sign)
@@ -123,12 +123,4 @@ void catch_Signal(int Sign)
     default:
         break;
     }
-}
-int signal1(int signo, void (*func)(int))
-{
-    struct sigaction act, oact;
-    act.sa_handler = func;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-    return sigaction(signo, &act, &oact);
 }
