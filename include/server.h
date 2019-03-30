@@ -1,3 +1,6 @@
+#ifndef SERVER_H
+#define SERVER_H
+
 #include <netinet/in.h>
 #include <set>
 #include <string.h>
@@ -88,3 +91,5 @@ void Server::catch_signal(int sign)
         break;
     }
 }
+
+#endif
