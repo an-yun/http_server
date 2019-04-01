@@ -18,12 +18,12 @@ SRCS=$(addprefix $(SRCDIR)/,$(SRCSFILES))
 OBJS=$(addprefix $(BUILDDIR)/,$(SRCSFILES:.cpp=.o))
 
 $(BINDIR)/http_server:$(OBJS)
-	$(LINK.cxx) $(OBJS) -o $(BUILDDIR)/server
-	cp $(BUILDDIR)/server $(BINDIR)/http_server -f
+	$(LINK.cxx) $(OBJS) -o $(BUILDDIR)/http_server
+	cp $(BUILDDIR)/http_server $(BINDIR)/http_server -f
 		
 run:$(BINDIR)/http_server
 	@echo ================run================
-	@$(BINDIR)/http_server
+	@$(BINDIR)/http_server web 8080
 
 $(OBJS):$(BUILDDIR)/%.o:$(SRCDIR)/%.cpp $(INLCUDEDIR)/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@

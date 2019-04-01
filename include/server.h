@@ -11,11 +11,6 @@
 using std::set;
 using std::string;
 
-void catch_Signal(int Sign);
-int signal1(int signo, void (*func)(int));
-string get_ip_address(const sockaddr_in &client_addr);
-string get_port(const sockaddr_in &client_addr);
-
 
 class Server
 {
@@ -39,57 +34,9 @@ class Server
     ~Server();
 };
 
+void test_server();
+string get_ip_address(const sockaddr_in &client_addr);
+string get_port(const sockaddr_in &client_addr);
 
-
-set<Server *> Server::all_servers;
-
-
-Server::Server(string web_root_path, int listen_port)
-    : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
-{
-    all_servers.insert(this);
-}
-
-void Server::close()
-{
-    printf("server %s:%d closed \n", web_root_path.c_str(), listen_port);
-}
-
-Server::~Server()
-{
-    close();
-    all_servers.erase(this);
-}
-
-int signal1(int signo, void (*func)(int))
-{
-    struct sigaction act, oact;
-    act.sa_handler = func;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-    return sigaction(signo, &act, &oact);
-}
-
-void Server::catch_signal(int sign)
-{
-    switch (sign)
-    {
-    case SIGINT:
-    case SIGTERM:
-        for(auto s:all_servers)
-            s->close();
-        printf("all server closed\n");
-        exit(0);
-        break;
-    case SIGPIPE:
-        //printf("signal SIGPIPE\n");
-        break;
-    case SIGALRM:
-        //printf("signal SIGALRM\n");
-        break;
-    default:
-        break;
-    }
-}
 
 #endif
