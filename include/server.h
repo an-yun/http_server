@@ -34,7 +34,11 @@ class Server
     ~Server();
 };
 
-void test_server();
+#define test_server()  \
+    Server server1, server2;\
+    signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/ \
+    signal(SIGTERM, Server::catch_signal)  //捕捉SIGINT信号 kill http_server
+
 string get_ip_address(const sockaddr_in &client_addr);
 string get_port(const sockaddr_in &client_addr);
 

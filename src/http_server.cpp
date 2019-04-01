@@ -1,3 +1,5 @@
+#include "http_server.h"
+#include "server.h"
 #include <errno.h>
 #include <netinet/in.h>
 #include <signal.h>
@@ -8,15 +10,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "server.h"
-#include "http_server.h"
 
+#define TEST
 
 int main(int argc, char *argv[])
 {
-    // Server server;
-    // signal(SIGINT, Server::catch_signal);  //捕捉SIGINT信号
-    // signal(SIGTERM, Server::catch_signal); //捕捉SIGTERM信号
+#ifdef TEST
+    test_server();
+#endif
     if (argc > 2)
     {
         int port = atoi(argv[2]);             // 解析端口
@@ -33,8 +34,10 @@ int main(int argc, char *argv[])
         //监听客户端连接
         if (listen(st, 8) == -1)
             printf("listen error:%s(error: %d)\n", strerror(errno), errno);
+#ifndef TEST
         signal1(SIGINT, catch_Signal);  //捕捉SIGINT信号
         signal1(SIGTERM, catch_Signal); //捕捉SIGTERM信号
+#endif
         const size_t MAX_LEN = 2048;
         char buff[MAX_LEN];
         //客户端连接地址和连接标示
@@ -62,11 +65,12 @@ int main(int argc, char *argv[])
                 const char *response_head = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
                 //打开html文件
                 struct stat t;
-                const char *filename = "../web/index.html";
-                stat(filename, &t);
+                string file_name = argv[1];
+                file_name.append("/index.html");
+                stat(file_name.c_str(), &t);
                 int file_size = t.st_size + 4;
                 char file_buff[MAX_LEN];
-                FILE *html_file = fopen(filename, "rb");
+                FILE *html_file = fopen(file_name.c_str(), "rb");
                 fread(file_buff, t.st_size, 1, html_file);
                 file_buff[file_size - 4] = '\r';
                 file_buff[file_size - 3] = '\n';
@@ -94,7 +98,6 @@ int main(int argc, char *argv[])
 int st = -1;
 int client_st = -1;
 
-
 int signal1(int signo, void (*func)(int))
 {
     struct sigaction act, oact;
@@ -109,7 +112,7 @@ void catch_Signal(int Sign)
     switch (Sign)
     {
     case SIGINT:
-        printf("signal SIGINT\n");
+        printf("\nsignal SIGINT\n");
         if (st != -1)
             close(st);
         if (client_st != -1)
@@ -118,13 +121,13 @@ void catch_Signal(int Sign)
         exit(0);
         break;
     case SIGPIPE:
-        printf("signal SIGPIPE\n");
+        printf("\nsignal SIGPIPE\n");
         break;
     case SIGALRM:
-        printf("signal SIGALRM\n");
+        printf("\nsignal SIGALRM\n");
         break;
     case SIGTERM:
-        printf("signal SIGTERM\n");
+        printf("\nsignal SIGTERM\n");
         if (st != -1)
             close(st);
         if (client_st != -1)

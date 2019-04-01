@@ -10,11 +10,6 @@
 #include <unistd.h>
 #include "server.h"
 
-void test_server()
-{
-    Server server;
-    signal(SIGINT, Server::catch_signal);  //捕捉SIGINT信号
-}
 
 set<Server *> Server::all_servers;
 
@@ -42,7 +37,8 @@ void Server::catch_signal(int sign)
     {
     case SIGINT:
     case SIGTERM:
-        for(auto s:all_servers)
+        printf("\n");
+        for (auto s : all_servers)
             s->close();
         printf("all server closed\n");
         exit(0);
