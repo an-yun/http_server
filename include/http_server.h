@@ -13,8 +13,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-extern int st;
-extern int client_st;
 int signal1(int signo, void (*func)(int));
 void catch_Signal(int Sign);
 

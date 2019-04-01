@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define TEST
+//#define TEST
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     if (argc > 2)
     {
         int port = atoi(argv[2]);             // 解析端口
-        st = socket(AF_INET, SOCK_STREAM, 0); //建立TCP的socket描述符
+        int st = socket(AF_INET, SOCK_STREAM, 0); //建立TCP的socket描述符
         //设置监听地址
         struct sockaddr_in server_addr;
         memset(&server_addr, 0, sizeof(server_addr)); //可以去掉
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         {
 
             socklen_t addr_len = sizeof(client_addr);
-            client_st = accept(st, (struct sockaddr *)&client_addr, &addr_len); //阻塞接受连接
+            int client_st = accept(st, (struct sockaddr *)&client_addr, &addr_len); //阻塞接受连接
             if (client_st == -1 && errno != 4)
             {
                 printf("accept error:%s(error: %d)\n", strerror(errno), errno);
@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
                 close(client_st);
             }
         }
-        close(client_st);
         close(st);
         printf("close\n");
     }
@@ -113,10 +112,6 @@ void catch_Signal(int Sign)
     {
     case SIGINT:
         printf("\nsignal SIGINT\n");
-        if (st != -1)
-            close(st);
-        if (client_st != -1)
-            close(client_st);
         printf("myhttp end\n");
         exit(0);
         break;
@@ -128,10 +123,6 @@ void catch_Signal(int Sign)
         break;
     case SIGTERM:
         printf("\nsignal SIGTERM\n");
-        if (st != -1)
-            close(st);
-        if (client_st != -1)
-            close(client_st);
         printf("myhttp end\n");
         exit(0);
         break;
