@@ -13,6 +13,13 @@
 
 set<Server *> Server::all_servers;
 
+string get_ip_address(const sockaddr_in &client_addr)
+{
+    unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
+    char ip_str[24];
+    sprintf(ip_str, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+    return ip_str;
+}
 
 Server::Server(string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)

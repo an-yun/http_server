@@ -1,5 +1,4 @@
-#include "http_server.h"
-#include "server.h"
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <signal.h>
@@ -11,6 +10,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "http_server.h"
+#include "server.h"
+#include "ioutils.hpp"
 //#define TEST
 
 int main(int argc, char *argv[])
@@ -20,7 +22,7 @@ int main(int argc, char *argv[])
 #endif
     if (argc > 2)
     {
-        int port = atoi(argv[2]);             // 解析端口
+        int port = atoi(argv[2]);                 // 解析端口
         int st = socket(AF_INET, SOCK_STREAM, 0); //建立TCP的socket描述符
         //设置监听地址
         struct sockaddr_in server_addr;
@@ -55,8 +57,7 @@ int main(int argc, char *argv[])
             else
             {
                 //打印客户端ip
-                unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
-                printf("客户端ip:%u.%u.%u.%u\n", ip[0], ip[1], ip[2], ip[3]);
+                println(get_ip_address(client_addr));
                 //打印客户端请求头
                 size_t n = recv(client_st, buff, MAX_LEN, 0);
                 buff[n] = 0;
