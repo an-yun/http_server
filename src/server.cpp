@@ -24,7 +24,24 @@ string get_ip_address(const sockaddr_in &client_addr)
 Server::Server(string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
 {
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(listen_port);
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
     all_servers.insert(this);
+}
+
+
+int Server::bind_and_listen()
+{
+    int result_code = bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr));
+    // to do
+    return result_code;
+}
+
+string Server::get_error_mess()
+{
+    return error_message;
 }
 
 void Server::close()

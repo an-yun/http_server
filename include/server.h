@@ -20,6 +20,9 @@ class Server
     string web_root_path;
     int listen_port;
     int server_socket;
+    struct sockaddr_in server_addr;
+    char buff[1024];
+    string error_message;
 
   public:
     static void catch_signal(int sign);

@@ -5,6 +5,7 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
+                    "/usr/include",
                     "/usr/local/include",
                     "${workspaceFolder}/include"
                 ],
@@ -12,6 +13,7 @@
             },
             "includePath": [
                 "${workspaceFolder}",
+                "/usr/include",
                 "/usr/local/include",
                 "${workspaceFolder}/include"
             ],
