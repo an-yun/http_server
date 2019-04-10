@@ -13,7 +13,7 @@
 #include "http_server.h"
 #include "server.h"
 
-//#define TEST
+#define TEST
 
 int main(int argc, char *argv[])
 {

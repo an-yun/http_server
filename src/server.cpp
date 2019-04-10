@@ -29,7 +29,7 @@ Server::Server(string web_root_path, int listen_port)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(listen_port);
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
-    println(get_ip_address(server_addr));    
+    //println(get_ip_address(server_addr));    
     all_servers.insert(this);
 }
 
