@@ -7,6 +7,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <signal.h>
+#include "ioutils.h"
 
 using std::set;
 using std::string;

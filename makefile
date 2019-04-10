@@ -27,3 +27,7 @@ run:$(BINDIR)/http_server
 
 $(OBJS):$(BUILDDIR)/%.o:$(SRCDIR)/%.cpp $(INLCUDEDIR)/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm build/* -rf
+	rm bin/* -rf

@@ -1,3 +1,6 @@
+#ifndef IOUTILS_HPP
+#define IOUTILS_HPP
+
 #include <algorithm>
 #include <iostream>
 #include <vector>
@@ -54,10 +57,8 @@ inline void print(const T &t, const Args... rest)
     print(rest...);
 }
 
-void println()
-{
-    std::cout << std::endl;
-}
+//输出空行
+void println();
 
 template <typename T>
 inline void println(const T &t)
@@ -74,3 +75,5 @@ inline void println(const T &t, const Args... rest)
     print(t, rest...);
     std::cout << std::endl;
 }
+
+#endif
