@@ -22,7 +22,15 @@ string get_ip_address(const sockaddr_in &client_addr)
     return ip_str;
 }
 
-Server::Server(string web_root_path, int listen_port)
+void test_server()
+{
+    Server server1, server2;
+    signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/ 
+    signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
+    if(server1.bind_and_listen()) println(server1.get_error_mess());
+    else println("bind and listen ok");
+}
+    Server::Server(string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
 {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -38,6 +46,20 @@ int Server::bind_and_listen()
 {
     int result_code = bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr));
     // to do
+    char buff[256];
+    if(result_code == -1)
+    {
+        sprintf(buff, "bind error:%s(error: %d)\n", strerror(errno), errno);
+        error_message = buff;
+        return result_code;
+    }
+    result_code = listen(server_socket, 8);
+    if(result_code == -1)
+    {
+        sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
+        error_message = buff;
+        return result_code;
+    }
     return result_code;
 }
 

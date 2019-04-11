@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 #ifdef TEST
     test_server();
-#endif
+#else
     if (argc > 2)
     {
         int port = atoi(argv[2]);                 // 解析端口
@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
     {
         printf("usage: server port");
     }
+#endif
     return 0;
 }
 
