@@ -4,12 +4,14 @@
             "name": "Linux",
             "browse": {
                 "path": [
+                    "/usr/include",
                     "${workspaceFolder}",
                     "${workspaceFolder}/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
+                "/usr/include",
                 "${workspaceFolder}",
                 "${workspaceFolder}/include"
                 
