@@ -45,10 +45,9 @@ void test_server()
 int Server::bind_and_listen()
 {
     int result_code = bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr));
-    // to do
-    char buff[256];
     if(result_code == -1)
     {
+        char buff[256];
         sprintf(buff, "bind error:%s(error: %d)\n", strerror(errno), errno);
         error_message = buff;
         return result_code;
@@ -56,11 +55,31 @@ int Server::bind_and_listen()
     result_code = listen(server_socket, 8);
     if(result_code == -1)
     {
+        char buff[256];
         sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
         error_message = buff;
         return result_code;
     }
     return result_code;
+}
+
+int Server::accept(sockaddr_in &client_addr)
+{
+    socklen_t len = sizeof(client_addr);
+    int client_st = ::accept(server_socket, (struct sockaddr*)(&client_addr),&len);
+    if(client_st == -1)
+    {
+        char buff[256];
+        sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
+        error_message = buff;
+    }
+    return client_st;
+}
+
+int Server::accept()
+{
+    sockaddr_in client_addr;
+    return this->accept(client_addr);
 }
 
 std::string Server::get_error_mess()
