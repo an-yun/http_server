@@ -9,37 +9,34 @@
 #include <signal.h>
 #include "ioutils.h"
 
-using std::set;
-using std::string;
-
 
 class Server
 {
   private:
-    static set<Server *> all_servers;
+    static std::set<Server *> all_servers;
 
-    string web_root_path;
+    std::string web_root_path;
     int listen_port;
     int server_socket;
     struct sockaddr_in server_addr;
-    string error_message;
+    std::string error_message;
 
   public:
     static void catch_signal(int sign);
 
-    Server(string web_root_path = "../web", int listen_port = 8080);
+    Server(std::string web_root_path = "../web", int listen_port = 8080);
     int bind_and_listen();
     int accept(sockaddr_in &client_addr); // wreite client add info to client_addr
     int accept();
-    string get_error_mess(); //if an error occur, return the error message else return empty string
+    std::string get_error_mess(); //if an error occur, return the error message else return empty std::string
     void close();
     
     ~Server();
 };
 
 void test_server();  
-string get_ip_address(const sockaddr_in &client_addr);
-string get_port(const sockaddr_in &client_addr);
+std::string get_ip_address(const sockaddr_in &client_addr);
+std::string get_port(const sockaddr_in &client_addr);
 
 
 #endif

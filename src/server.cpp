@@ -12,9 +12,9 @@
 #include "server.h"
 
 
-set<Server *> Server::all_servers;
+std::set<Server *> Server::all_servers;
 
-string get_ip_address(const sockaddr_in &client_addr)
+std::string get_ip_address(const sockaddr_in &client_addr)
 {
     unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
     char ip_str[24];
@@ -30,7 +30,7 @@ void test_server()
     if(server1.bind_and_listen()) println(server1.get_error_mess());
     else println("bind and listen ok");
 }
-    Server::Server(string web_root_path, int listen_port)
+    Server::Server(std::string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
 {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,7 +63,7 @@ int Server::bind_and_listen()
     return result_code;
 }
 
-string Server::get_error_mess()
+std::string Server::get_error_mess()
 {
     return error_message;
 }
