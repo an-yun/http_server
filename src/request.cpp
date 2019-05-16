@@ -57,7 +57,10 @@ void Request::parse_request(const char * request_str, size_t n)
                 string para_name(request_str + name_start, request_str + at);
                 if(ch == '=')
                 {
-                    
+                    size_t value_start = ++at;
+                    while ((ch = request_str[at]) != '&' && ch != '=' && ch != ' ')
+                        ++at;
+                    request_parameter[para_name] = string(request_str + value_start, request_str + at);
                 }
             }
         }
