@@ -17,9 +17,15 @@ SRCSFILES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
 SRCS=$(addprefix $(SRCDIR)/,$(SRCSFILES))
 OBJS=$(addprefix $(BUILDDIR)/,$(SRCSFILES:.cpp=.o))
 
-$(BINDIR)/http_server:$(OBJS)
+$(BINDIR)/http_server:$(BUILDDIR) $(BINDIR) $(OBJS)
 	$(LINK.cxx) $(OBJS) -o $(BUILDDIR)/http_server
 	cp $(BUILDDIR)/http_server $(BINDIR)/http_server -f
+
+$(BUILDDIR):
+	mkdir $(BUILDDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
 		
 run:$(BINDIR)/http_server
 	@echo ================run================

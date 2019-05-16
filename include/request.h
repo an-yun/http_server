@@ -21,7 +21,6 @@ class Request
 {
     public:
         using size_t  = std::size_t;
-        const static size_t SIZE_MAX;
         using string  = std::string;
         template<class K, class V> using map = std::map<K,V>;
 

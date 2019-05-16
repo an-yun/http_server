@@ -13,7 +13,7 @@
 #include "http_server.h"
 #include "server.h"
 
-#define TEST
+//#define TEST
 
 int main(int argc, char *argv[])
 {
@@ -33,13 +33,17 @@ int main(int argc, char *argv[])
         server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
         //将套接字绑定在指定的地址上
         if (bind(st, (sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+        {
             printf("bind error:%s(error: %d)\n", strerror(errno), errno);
+            exit(1);
+        }
+
         //监听客户端连接
         if (listen(st, 8) == -1)
             printf("listen error:%s(error: %d)\n", strerror(errno), errno);
 #ifndef TEST
-        signal1(SIGINT, catch_Signal);  //捕捉SIGINT信号
-        signal1(SIGTERM, catch_Signal); //捕捉SIGTERM信号
+        signal(SIGINT, catch_Signal);  //捕捉SIGINT信号
+        signal(SIGTERM, catch_Signal); //捕捉SIGTERM信号
 #endif
         const size_t MAX_LEN = 2048;
         char buff[MAX_LEN];
@@ -67,7 +71,7 @@ int main(int argc, char *argv[])
                 const char *response_head = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
                 //打开html文件
                 struct stat t;
-                string file_name = argv[1];
+                std::string file_name = argv[1];
                 file_name.append("/index.html");
                 stat(file_name.c_str(), &t);
                 int file_size = t.st_size + 4;
