@@ -9,7 +9,8 @@
 enum RequestMethod
 {
     GET,
-    POST
+    POST,
+    OTHER
 };
 
 enum ConnectionType
@@ -26,22 +27,27 @@ class Request
 
     private:
         enum RequestMethod method;
-        string request_url;
+        string request_path;
+        map<string, string> request_parameter;
         string http_type;
         string host;
         string user_agent;
         string content_type;
         size_t content_length;
         enum ConnectionType connection;
-
+        //错误请求
+        string error_message;
     public:
-        Request(const char * requst_str, size_t n = SIZE_MAX) ;
+        Request(const char * request_str, size_t n = SIZE_MAX) ;
         Request(const string & requst_str);
         
         string get_request_path();
-        map<string, string> get_request_parameter();
+        const map<string, string> &get_request_parameter();
         enum RequestMethod get_request_type();
-        
+        string get_error_message();
+    
+    private:
+        void parse_request(const char * request_str, size_t n);
 };
 
 #endif

@@ -12,6 +12,7 @@
 
 #include "http_server.h"
 #include "server.h"
+#include "request.h"
 
 //#define TEST
 
@@ -66,7 +67,8 @@ int main(int argc, char *argv[])
                 //打印客户端请求头
                 size_t n = recv(client_st, buff, MAX_LEN, 0);
                 buff[n] = 0;
-                printf("请求头:\n %s\n", buff);
+                Request r(buff, n);
+                printf("请求头:\n%s\n", buff);
                 //处理回复
                 const char *response_head = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
                 //打开html文件
