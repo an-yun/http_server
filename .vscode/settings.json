@@ -65,7 +65,9 @@
         "regex": "cpp",
         "memory_resource": "cpp",
         "string_view": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "__debug": "cpp",
+        "__nullptr": "cpp"
     },
 
 }

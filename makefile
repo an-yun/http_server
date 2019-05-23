@@ -10,7 +10,7 @@ BUILDDIR=$(ROOT)/build
 BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -D_GNU_SOURCE 
 
 #源代码
 SRCSFILES=$(notdir $(wildcard $(SRCDIR)/*.cpp))

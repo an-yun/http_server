@@ -35,7 +35,7 @@ class Request
         string content_type;
         size_t content_length;
         enum ConnectionType connection;
-        //错误请求
+        //????
         string error_message;
     public:
         Request(const char * request_str, size_t n = SIZE_MAX) ;
@@ -47,7 +47,10 @@ class Request
         string get_error_message();
     
     private:
-        void parse_request(const char * request_str, size_t n);
+        size_t parse_request(const char * request_str, size_t n);
+        size_t parse_hosts(const char *request_str, size_t n);
+        size_t parse_connection_type(const char *request_str, size_t n);
+        size_t parse_user_agent(const char *request_str, size_t n);
 };
 
 #endif

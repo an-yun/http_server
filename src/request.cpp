@@ -9,7 +9,7 @@ Request::Request(const char * request_str, size_t n)
     parse_request(request_str, n);
 }
 
-void Request::parse_request(const char * request_str, size_t n)
+Request::size_t Request::parse_request(const char * request_str, size_t n)
 {
     size_t at = 0;
     //解析请求方法
@@ -65,4 +65,39 @@ void Request::parse_request(const char * request_str, size_t n)
             }
         }
     }
+    //解析HTTP类别
+    if(std::strncmp("HTTP/",++at+request_str,5) == 0)
+    {
+        auto http_start = at += 5;
+        while (request_str[at] != ' ' && request_str[at] != '\r' && request_str[at] != '\n')
+            ++ at;
+        http_type = string(request_str + http_start, request_str + at);
+    }
+    //解析host， connection等其他请求参数
+    while(at < n)
+    {
+        while(at < n &&(request_str[at] == '\r' || request_str[at] == '\n'))
+            ++at;
+        auto current = request_str + at;
+        if (std::strncmp("Host:", request_str +at, 5) == 0)
+            at += parse_hosts(request_str + at, n - at);
+        else
+        {
+            ++at;
+        }
+    }
+    return at;
+}
+Request::size_t Request::parse_hosts(const char *request_str, size_t n)
+{
+    size_t at = 6;
+    while(request_str[at] != '\r' && request_str[at] != '\n')
+        ++at;
+    host = string(request_str + 6, request_str + at);
+    return at;
+}
+
+size_t Request::parse_connection_type(const char *request_str, size_t n)
+{
+    return 1;
 }
