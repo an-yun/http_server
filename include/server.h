@@ -16,7 +16,7 @@ class Server
 public:
   //public type and constance
   static const unsigned forever = std::numeric_limits<unsigned>::max();
-  static const socklen_t socklen = sizeof(sockaddr_in);
+  static const size_t max_len = 1024;
 
   Server(std::string web_root_path = "../web", int listen_port = 8080);
   bool start();

@@ -14,6 +14,7 @@
 Server::Server(std::string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
 {
+    //surpport ipv4 and use tcp protocol
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(listen_port);
@@ -24,10 +25,30 @@ Server::Server(std::string web_root_path, int listen_port)
 
 bool Server::start()
 {
-    if(bind_and_listen() == -1 )
+    if (bind_and_listen() == -1)
         return false;
-    
 
+    return true;
+}
+
+Connection Server::wait_connection(unsigned time_out)
+{
+    Connection conection;
+    sockaddr_in client_addr;
+    socklen_t len = sizeof(client_addr);
+    int client_st;
+    char buff[max_len];
+    while ((client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len)) == -1)
+    {
+        sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
+        error_message = buff;
+    }
+    size_t n = recv(client_st, buff, max_len, 0);
+    conection.request.parse_request(buff,n);
+    conection.client_st = client_st;
+    conection.client_ip = client_addr.sin_addr.s_addr;
+    conection.clinet_port = client_addr.sin_port;
+    return conection;
 }
 
 int Server::bind_and_listen()
@@ -108,9 +129,9 @@ std::set<Server *> Server::all_servers;
 
 std::string get_ip_address(const sockaddr_in &client_addr)
 {
-    unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
+    in_addr_t ip = client_addr.sin_addr.s_addr;
     char ip_str[24];
-    sprintf(ip_str, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+    sprintf(ip_str, "%u.%u.%u.%u", ip & 0xff000000, ip & 0xff0000, ip & 0xff00, ip & 0xff);
     return ip_str;
 }
 

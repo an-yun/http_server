@@ -35,19 +35,20 @@ class Request
         string content_type;
         size_t content_length;
         enum ConnectionType connection;
-        //????
+        //错误信息
         string error_message;
     public:
-        Request(const char * request_str, size_t n = SIZE_MAX) ;
+        Request(const char * request_str= nullptr, size_t n = SIZE_MAX) ;
         Request(const string & requst_str);
         
+        size_t parse_request(const char * request_str, size_t n);
         string get_request_path();
         const map<string, string> &get_request_parameter();
         enum RequestMethod get_request_type();
         string get_error_message();
     
     private:
-        size_t parse_request(const char * request_str, size_t n);
+        
         size_t parse_hosts(const char *request_str, size_t n);
         size_t parse_connection_type(const char *request_str, size_t n);
         size_t parse_user_agent(const char *request_str, size_t n);
