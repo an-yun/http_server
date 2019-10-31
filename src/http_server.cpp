@@ -61,14 +61,14 @@ int main(int argc, char *argv[])
                 type = ".*";
             struct stat t;
             stat(file_name.c_str(), &t);
-            size_t content_size = t.st_size + 4;
-            int send_len = sprintf(buff, response_head, response_code, type, content_size);
+            // size_t content_size = t.st_size + 4;
+            int send_len = sprintf(buff, response_head, response_code, type, t.st_size);
             connection.send(buff, send_len);
             //打开html文件
             FILE *html_file = fopen(file_name.c_str(), "rb");
             while ((send_len = fread(buff, 1, 1024, html_file)) > 0)
                 connection.send(buff, send_len);
-            connection.send("\r\n\r\n", 4);
+            // connection.send("\r\n\r\n", 4);
         }
     }
     else
