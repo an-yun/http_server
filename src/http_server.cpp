@@ -14,7 +14,7 @@
 #include "server.h"
 #include "request.h"
 
-//#define TEST
+#define TEST
 
 int main(int argc, char *argv[])
 {

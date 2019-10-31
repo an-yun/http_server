@@ -11,41 +11,29 @@
 
 #include "server.h"
 
-
-std::set<Server *> Server::all_servers;
-
-std::string get_ip_address(const sockaddr_in &client_addr)
-{
-    unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
-    char ip_str[24];
-    sprintf(ip_str, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
-    return ip_str;
-}
-
-void test_server()
-{
-    Server server1, server2;
-    signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/ 
-    signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
-    if(server1.bind_and_listen()) println(server1.get_error_mess());
-    else println("bind and listen ok");
-}
-    Server::Server(std::string web_root_path, int listen_port)
+Server::Server(std::string web_root_path, int listen_port)
     : web_root_path(web_root_path), listen_port(listen_port), server_socket(-1)
 {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(listen_port);
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
-    //println(get_ip_address(server_addr));    
+    //println(get_ip_address(server_addr));
     all_servers.insert(this);
 }
 
+bool Server::start()
+{
+    if(bind_and_listen() == -1 )
+        return false;
+    
+
+}
 
 int Server::bind_and_listen()
 {
     int result_code = bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr));
-    if(result_code == -1)
+    if (result_code == -1)
     {
         char buff[256];
         sprintf(buff, "bind error:%s(error: %d)\n", strerror(errno), errno);
@@ -53,7 +41,7 @@ int Server::bind_and_listen()
         return result_code;
     }
     result_code = listen(server_socket, 8);
-    if(result_code == -1)
+    if (result_code == -1)
     {
         char buff[256];
         sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
@@ -63,23 +51,18 @@ int Server::bind_and_listen()
     return result_code;
 }
 
-int Server::accept(sockaddr_in &client_addr)
+int Server::accept()
 {
+    sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
-    int client_st = ::accept(server_socket, (struct sockaddr*)(&client_addr),&len);
-    if(client_st == -1)
+    int client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
+    if (client_st == -1)
     {
         char buff[256];
         sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
         error_message = buff;
     }
     return client_st;
-}
-
-int Server::accept()
-{
-    sockaddr_in client_addr;
-    return this->accept(client_addr);
 }
 
 std::string Server::get_error_mess()
@@ -119,4 +102,25 @@ void Server::catch_signal(int sign)
     default:
         break;
     }
+}
+
+std::set<Server *> Server::all_servers;
+
+std::string get_ip_address(const sockaddr_in &client_addr)
+{
+    unsigned char *ip = (unsigned char *)&client_addr.sin_addr.s_addr;
+    char ip_str[24];
+    sprintf(ip_str, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+    return ip_str;
+}
+
+void test_server()
+{
+    Server server1, server2;
+    signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/
+    signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
+    if (server1.start())
+        println(server1.get_error_mess());
+    else
+        println("bind and listen ok");
 }

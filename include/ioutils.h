@@ -68,7 +68,6 @@ inline void println(const T &t)
 }
 
 
-
 template <typename T, typename... Args>
 inline void println(const T &t, const Args... rest)
 {
