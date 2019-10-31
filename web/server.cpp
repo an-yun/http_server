@@ -46,7 +46,8 @@ Connection Server::wait_connection(unsigned time_out)
     size_t n = recv(client_st, buff, max_len, 0);
     conection.request.parse_request(buff, n);
     conection.client_st = client_st;
-    conection.client_address = client_addr;
+    conection.client_ip = client_addr.sin_addr.s_addr;
+    conection.clinet_port = client_addr.sin_port;
     return conection;
 }
 
@@ -133,7 +134,10 @@ std::set<Server *> Server::all_servers;
 
 std::string get_ip_address(const sockaddr_in &client_addr)
 {
-    return inet_ntoa(client_addr.sin_addr);;
+    in_addr_t ip = client_addr.sin_addr.s_addr;
+    char ip_str[24];
+    sprintf(ip_str, "%u.%u.%u.%u", ip & 0xff000000, ip & 0xff0000, ip & 0xff00, ip & 0xff);
+    return ip_str;
 }
 
 void test_server()
@@ -158,6 +162,7 @@ void test_server()
         
         std::string file_path = server1.get_web_path();
         std::string file_name = connection.get_request().get_request_path();
+        println(file_name);
         size_t response_code = 200;
         //the file can be read?
         if (file_name == "/")
@@ -169,15 +174,14 @@ void test_server()
             file_name = file_path + "/404.html";
             response_code = 404;
         }
-        println(connection.get_client_ip(),":", file_name);
         //judge type
         const char *type;
         if (endwith(file_name, ".html"))
             type = "text/html";
-        else if(endwith(file_name, ".txt") || endwith(file_name, ".cpp"))
+        else if(endwith(file_name, ".txt"))
             type = "text/plain";
-        // else if(endwith(file_name, ".jpg"))
-        //     type = "application/x-jpg";
+        else if(endwith(file_name, ".jpg"))
+            type = "application/x-jpg";
         else type = ".*";
         struct stat t;
         stat(file_name.c_str(), &t);
@@ -186,8 +190,10 @@ void test_server()
         connection.send(buff,send_len);
         //打开html文件
         FILE *html_file = fopen(file_name.c_str(), "rb");
-        while ((send_len = fread(buff, 1, 1024, html_file)) > 0)
+        while((send_len = fread(buff, 1,1024, html_file)) > 0)
+        {
             connection.send(buff,send_len);
+        }
         connection.send("\r\n\r\n", 4);
     }
 }

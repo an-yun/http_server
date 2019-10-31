@@ -11,7 +11,10 @@ Request::Request(const char *request_str, size_t n)
         parse_request(request_str, n);
     }
 }
-
+std::string Request::get_request_path() const
+{
+    return request_path;
+}
 Request::size_t Request::parse_request(const char *request_str, size_t n)
 {
     size_t at = 0;

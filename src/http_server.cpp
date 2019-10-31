@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
                 int file_size = t.st_size + 4;
                 char file_buff[MAX_LEN];
                 FILE *html_file = fopen(file_name.c_str(), "rb");
-                fread(file_buff, t.st_size, 1, html_file);
+                fread(file_buff,  1,t.st_size, html_file);
                 file_buff[file_size - 4] = '\r';
                 file_buff[file_size - 3] = '\n';
                 file_buff[file_size - 2] = '\r';

@@ -1,8 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include "connection.h"
-#include "ioutils.h"
 #include <cstring>
 #include <limits>
 #include <netinet/in.h>
@@ -10,6 +8,8 @@
 #include <signal.h>
 #include <string>
 #include <sys/socket.h>
+#include "ioutils.h"
+#include "connection.h"
 
 class Server
 {
@@ -21,6 +21,7 @@ public:
   Server(std::string web_root_path = "../web", int listen_port = 8080);
   bool start();
   Connection wait_connection(unsigned time_out = forever);
+  const std::string & get_web_path();
   std::string get_error_mess(); //if an error occur, return the error message else return empty std::string
   void close();
 

@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include <vector>
 #include <type_traits>
 
@@ -74,5 +75,18 @@ inline void println(const T &t, const Args... rest)
     print(t, rest...);
     std::cout << std::endl;
 }
+inline bool startwith(const std::string &str, const std::string& start)
+{
+    size_t str_len = str.length(), start_len = start.length();
+    return str_len>= start_len && std::equal(str.begin(),str.begin()+start_len,start.begin());
+}
+
+inline bool endwith(const std::string &str, const std::string& end)
+{
+    size_t str_len = str.length(), end_len = end.length();
+    return str_len>= end_len && std::equal(str.end()-end_len,str.end(),end.begin());
+}
+
+
 
 #endif
