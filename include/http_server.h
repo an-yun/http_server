@@ -14,8 +14,6 @@
 #include <unistd.h>
 
 #include "ioutils.h"
-
-int signal1(int signo, void (*func)(int));
-void catch_Signal(int Sign);
+#include "server.h"
 
 #endif

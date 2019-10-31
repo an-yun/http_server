@@ -11,131 +11,68 @@
 #include <unistd.h>
 
 #include "http_server.h"
-#include "server.h"
-#include "request.h"
-
-#define TEST
 
 int main(int argc, char *argv[])
 {
 
-#ifdef TEST
-    test_server();
-#else
     if (argc > 2)
     {
-        int port = atoi(argv[2]);                 // 解析端口
-        int st = socket(AF_INET, SOCK_STREAM, 0); //建立TCP的socket描述符
-        //设置监听地址
-        struct sockaddr_in server_addr;
-        memset(&server_addr, 0, sizeof(server_addr)); //可以去掉
-        server_addr.sin_family = AF_INET;
-        server_addr.sin_port = htons(port);
-        server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
-        //将套接字绑定在指定的地址上
-        if (bind(st, (sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+        Server server(argv[1], atoi(argv[2]));
+        // Server server2;
+        if (!server.start())
         {
-            printf("bind error:%s(error: %d)\n", strerror(errno), errno);
-            exit(1);
+            println(server.get_error_mess());
+            return -1;
         }
+        println("bind and listen ok");
 
-        //监听客户端连接
-        if (listen(st, 8) == -1)
-            printf("listen error:%s(error: %d)\n", strerror(errno), errno);
-#ifndef TEST
-        signal(SIGINT, catch_Signal);  //捕捉SIGINT信号
-        signal(SIGTERM, catch_Signal); //捕捉SIGTERM信号
-#endif
-        const size_t MAX_LEN = 2048;
-        char buff[MAX_LEN];
-        //客户端连接地址和连接标示
-        struct sockaddr_in client_addr;
+        signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/
+        signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
+
+        char buff[1028];
+        const char *response_head = "HTTP/1.1 %u OK\r\nContent-Type: %s; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
         while (true)
         {
+            Connection connection = server.wait_connection();
 
-            socklen_t addr_len = sizeof(client_addr);
-            int client_st = accept(st, (struct sockaddr *)&client_addr, &addr_len); //阻塞接受连接
-            if (client_st == -1 && errno != 4)
-            {
-                printf("accept error:%s(error: %d)\n", strerror(errno), errno);
-                break; //accept错误，循环break
-            }
+            std::string file_path = server.get_web_path();
+            std::string file_name = connection.get_request().get_request_path();
+            size_t response_code = 200;
+            //the file can be read?
+            if (file_name == "/")
+                file_name = file_path + "/index.html";
             else
+                file_name = file_path + file_name;
+            if (access(file_name.c_str(), F_OK | R_OK) == -1)
             {
-                //打印客户端ip
-                println(get_ip_address(client_addr));
-                //打印客户端请求头
-                size_t n = recv(client_st, buff, MAX_LEN, 0);
-                buff[n] = 0;
-                Request r(buff, n);
-                printf("请求头:\n%s\n", buff);
-                //处理回复
-                const char *response_head = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
-                //打开html文件
-                struct stat t;
-                std::string file_name = argv[1];
-                file_name.append("/index.html");
-                stat(file_name.c_str(), &t);
-                int file_size = t.st_size + 4;
-                char file_buff[MAX_LEN];
-                FILE *html_file = fopen(file_name.c_str(), "rb");
-                fread(file_buff,  1,t.st_size, html_file);
-                file_buff[file_size - 4] = '\r';
-                file_buff[file_size - 3] = '\n';
-                file_buff[file_size - 2] = '\r';
-                file_buff[file_size - 1] = '\n';
-                sprintf(buff, response_head, file_size); //设置响应头
-                size_t headlen = strlen(buff);
-                memcpy(buff + headlen, file_buff, file_size);
-                if (send(client_st, buff, headlen + file_size, 0) == -1)
-                    perror("send error");
-                close(client_st);
+                file_name = file_path + "/404.html";
+                response_code = 404;
             }
+            println(connection.get_client_ip(), ":", file_name);
+            //judge type
+            const char *type;
+            if (endwith(file_name, ".html"))
+                type = "text/html";
+            else if (endwith(file_name, ".txt") || endwith(file_name, ".cpp"))
+                type = "text/plain";
+            // else if(endwith(file_name, ".jpg"))
+            //     type = "application/x-jpg";
+            else
+                type = ".*";
+            struct stat t;
+            stat(file_name.c_str(), &t);
+            size_t content_size = t.st_size + 4;
+            int send_len = sprintf(buff, response_head, response_code, type, content_size);
+            connection.send(buff, send_len);
+            //打开html文件
+            FILE *html_file = fopen(file_name.c_str(), "rb");
+            while ((send_len = fread(buff, 1, 1024, html_file)) > 0)
+                connection.send(buff, send_len);
+            connection.send("\r\n\r\n", 4);
         }
-        close(st);
-        printf("close\n");
     }
     else
     {
-        printf("usage: server port");
-    }
-#endif
-    return 0;
-}
-
-int st = -1;
-int client_st = -1;
-
-int signal1(int signo, void (*func)(int))
-{
-    struct sigaction act, oact;
-    act.sa_handler = func;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-    return sigaction(signo, &act, &oact);
-}
-
-void catch_Signal(int Sign)
-{
-    switch (Sign)
-    {
-    case SIGINT:
-        printf("\nsignal SIGINT\n");
-        printf("myhttp end\n");
-        exit(0);
-        break;
-    case SIGPIPE:
-        printf("\nsignal SIGPIPE\n");
-        break;
-    case SIGALRM:
-        printf("\nsignal SIGALRM\n");
-        break;
-    case SIGTERM:
-        printf("\nsignal SIGTERM\n");
-        printf("myhttp end\n");
-        exit(0);
-        break;
-    default:
-        break;
+        printf("usage: ./http_server web_pathserver port");
     }
 }
