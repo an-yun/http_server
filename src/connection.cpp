@@ -1,7 +1,7 @@
 #include "connection.h"
 
 Connection::Connection()
-:buff(Connection::max_len,' '),request()
+    : buff(Connection::max_len, ' '), request()
 {
 }
 
@@ -22,14 +22,21 @@ size_t Connection::send(const std::string &content)
 
 std::string Connection::receive(size_t len)
 {
-    if(len > buff.length()) buff.resize(len+16);
+    if (len > buff.length())
+        buff.resize(len + 16);
     size_t n = ::recv(client_st, buff.data(), len, 0);
-    return buff.substr(0,n);
+    return buff.substr(0, n);
 }
 
-std::string Connection::get_client_ip()
+std::string Connection::get_client_ip() const
 {
-    return inet_ntoa(client_address.sin_addr);;
+    return inet_ntoa(client_address.sin_addr);
+    ;
+}
+
+std::string Connection::get_request_path() const
+{
+    return request_path;
 }
 
 bool Connection::close()

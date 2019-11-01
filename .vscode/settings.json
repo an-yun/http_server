@@ -1,6 +1,6 @@
 {
-    "http.proxy": "https://114.212.87.97:8087",
-    "http.proxyStrictSSL": false,
+    // "http.proxy": "https://114.212.87.97:8087",
+    // "http.proxyStrictSSL": false,
     "files.associations": {
         "system_error": "cpp",
         "type_traits": "cpp",
@@ -92,5 +92,6 @@
         "locale": "cpp",
         "stack": "cpp"
     },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
 
 }

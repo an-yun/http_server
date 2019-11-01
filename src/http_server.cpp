@@ -35,17 +35,15 @@ int main(int argc, char *argv[])
         {
             Connection connection = server.wait_connection();
 
-            std::string file_path = server.get_web_path();
-            std::string file_name = connection.get_request().get_request_path();
+            const std::string &file_path = server.get_web_path();
+            std::string file_name = connection.get_request_path();
             size_t response_code = 200;
             //the file can be read?
-            if (file_name == "/")
-                file_name = file_path + "/index.html";
-            else
-                file_name = file_path + file_name;
+            if (file_name == file_path)
+                file_name = file_path + "index.html";
             if (access(file_name.c_str(), F_OK | R_OK) == -1)
             {
-                file_name = file_path + "/404.html";
+                file_name = file_path + "404.html";
                 response_code = 404;
             }
             println(connection.get_client_ip(), ":", file_name);

@@ -21,6 +21,8 @@ Server::Server(std::string web_root_path, int listen_port)
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址
     //println(get_ip_address(server_addr));
     all_servers.insert(this);
+    if(!endwith(this->web_root_path,"/"))
+        this->web_root_path.push_back('/');
 }
 
 bool Server::start()
@@ -45,6 +47,7 @@ Connection Server::wait_connection(unsigned time_out)
     }
     size_t n = recv(client_st, buff, max_len, 0);
     conection.request.parse_request(buff, n);
+    conection.request_path = web_root_path + conection.request.get_request_path();
     conection.client_st = client_st;
     conection.client_address = client_addr;
     return conection;

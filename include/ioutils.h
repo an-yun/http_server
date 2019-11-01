@@ -87,6 +87,4 @@ inline bool endwith(const std::string &str, const std::string& end)
     return str_len>= end_len && std::equal(str.end()-end_len,str.end(),end.begin());
 }
 
-
-
 #endif

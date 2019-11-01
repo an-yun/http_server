@@ -37,6 +37,8 @@ Request::size_t Request::parse_request(const char *request_str, size_t n)
             ++at;
     }
     //解析请求路径
+    if(request_str[at]== '/')
+        ++at;
     size_t url_start = at;
     while (at < n && request_str[at] != ' ' && request_str[at] != '?')
         ++at;
