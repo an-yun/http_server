@@ -8,6 +8,8 @@
 #include <signal.h>
 #include <string>
 #include <sys/socket.h>
+#include <sys/epoll.h>
+
 #include "ioutils.h"
 #include "connection.h"
 
@@ -20,6 +22,7 @@ public:
 
   Server(std::string web_root_path = "../web", int listen_port = 8080);
   bool start();
+  void dispatch_request();
   Connection wait_connection(unsigned time_out = forever);
   const std::string & get_web_path();
   std::string get_error_mess(); //if an error occur, return the error message else return empty std::string

@@ -9,12 +9,15 @@ LDLIBS=$(LDDIR) #-l xxxlib
 BUILDDIR=$(ROOT)/build
 BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
+TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -D_GNU_SOURCE 
 
 #源代码
 SRCSFILES=$(notdir $(wildcard $(SRCDIR)/*.cpp))
+TESTFILES=$(notdir $(wildcard $(TESTDIR)/*.cpp))
 SRCS=$(addprefix $(SRCDIR)/,$(SRCSFILES))
+TEST=$(addprefix $(TESTDIR)/,$(TESTFILES))
 OBJS=$(addprefix $(BUILDDIR)/,$(SRCSFILES:.cpp=.o))
 
 $(BINDIR)/http_server:$(BUILDDIR) $(BINDIR) $(OBJS)

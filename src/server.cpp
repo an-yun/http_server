@@ -29,8 +29,15 @@ bool Server::start()
 {
     if (bind_and_listen() == -1)
         return false;
+    //create epoll 
 
     return true;
+}
+
+void Server::dispatch_request()
+{
+    
+    
 }
 
 Connection Server::wait_connection(unsigned time_out)
