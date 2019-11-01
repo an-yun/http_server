@@ -90,7 +90,10 @@
         "__tuple": "cpp",
         "ios": "cpp",
         "locale": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "complex": "cpp",
+        "rope": "cpp",
+        "slist": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
 

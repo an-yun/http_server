@@ -58,8 +58,6 @@ inline void print(const T &t, const Args... rest)
     print(rest...);
 }
 
-//输出空行
-void println();
 
 template <typename T>
 inline void println(const T &t)
@@ -75,6 +73,13 @@ inline void println(const T &t, const Args... rest)
     print(t, rest...);
     std::cout << std::endl;
 }
+
+//输出空行
+void println()
+{
+    std::cout << std::endl;
+}
+
 inline bool startwith(const std::string &str, const std::string& start)
 {
     size_t str_len = str.length(), start_len = start.length();
