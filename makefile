@@ -24,10 +24,9 @@ TEST_TARGET=$(TEST_FILES:.cpp=.bin)
 
 
 all:$(SRCS_TARGET) $(TEST_TARGET)
-	cp -f $(TESTDIR)/http_server.bin $(BINDIR)/http_server
 
-show:
-	@echo $(SRCS_TARGET) $(TEST_TARGET)
+install:$(BINDIR) all
+	cp -f $(TESTDIR)/http_server.bin $(BINDIR)/http_server
 
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
@@ -44,6 +43,8 @@ $(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/con
 $(TEST_TARGET):$(TESTDIR)/%.bin:$(TESTDIR)/%.cpp $(SRCS_TARGET)
 	$(CXX) $(CXXFLAGS) $< $(SRCS_TARGET)  -o $@
 
+$(BINDIR):
+	mkdir $(BINDIR)
 
 clean:
 	rm $(SRCDIR)/*.o -rf
