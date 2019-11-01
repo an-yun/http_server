@@ -87,7 +87,7 @@ Request::size_t Request::parse_request(const char *request_str, size_t n)
     {
         while (at < n && (request_str[at] == '\r' || request_str[at] == '\n'))
             ++at;
-        auto current = request_str + at;
+        // auto current = request_str + at;
         if (std::strncmp("Host:", request_str + at, 5) == 0)
             at += parse_hosts(request_str + at, n - at);
         else

@@ -1,6 +1,6 @@
 *.swp
-*.o
-*.bin
+src/*.o
+test/*.bin
 .vscode/ipch
 build/*
 bin/*
