@@ -20,11 +20,11 @@ SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
 TEST_FILES=$(addprefix $(TESTDIR)/, $(TEST))
 
 SRCS_TARGET=$(SRCS_FILES:.cpp=.o)
-TEST_TARGET=$(TEST_FILES:.cpp=)
+TEST_TARGET=$(TEST_FILES:.cpp=.bin)
 
 
 all:$(SRCS_TARGET) $(TEST_TARGET)
-	cp -f $(TESTDIR)/http_server $(BINDIR)/http_server
+	cp -f $(TESTDIR)/http_server.bin $(BINDIR)/http_server
 
 show:
 	@echo $(SRCS_TARGET) $(TEST_TARGET)
@@ -41,7 +41,7 @@ $(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INL
 $(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/server.cpp -o $@
 
-$(TEST_TARGET):$(TESTDIR)/%:$(TESTDIR)/%.cpp $(SRCS_TARGET)
+$(TEST_TARGET):$(TESTDIR)/%.bin:$(TESTDIR)/%.cpp $(SRCS_TARGET)
 	$(CXX) $(CXXFLAGS) $< $(SRCS_TARGET)  -o $@
 
 
