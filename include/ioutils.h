@@ -75,10 +75,7 @@ inline void println(const T &t, const Args... rest)
 }
 
 //输出空行
-void println()
-{
-    std::cout << std::endl;
-}
+void println();
 
 inline bool startwith(const std::string &str, const std::string& start)
 {
