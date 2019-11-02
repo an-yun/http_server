@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
             FILE *html_file = fopen(file_name.c_str(), "rb");
             while ((send_len = fread(buff, 1, 1024, html_file)) > 0)
                 connection.send(buff, send_len);
-            // connection.send("\r\n\r\n", 4);
         }
     }
     else

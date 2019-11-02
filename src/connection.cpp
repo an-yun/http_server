@@ -31,7 +31,6 @@ std::string Connection::receive(size_t len)
 std::string Connection::get_client_ip() const
 {
     return inet_ntoa(client_address.sin_addr);
-    ;
 }
 
 std::string Connection::get_request_path() const
