@@ -11,7 +11,7 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -D_GNU_SOURCE 
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
 
 SRCS=ioutils.cpp request.cpp connection.cpp server.cpp
 TEST=epoll_example.cpp epoll_server.cpp http_server.cpp
@@ -27,6 +27,9 @@ all:$(SRCS_TARGET) $(TEST_TARGET)
 
 install:$(BINDIR) all
 	cp -f $(TESTDIR)/http_server.bin $(BINDIR)/http_server
+
+run:install
+	$(BINDIR)/http_server web 8080
 
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
