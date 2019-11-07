@@ -18,8 +18,12 @@ int main()
     client_addr.sin_family = AF_INET;
     client_addr.sin_port = htons(8080);
     client_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    socklen_t len = sizeof(client_addr);
-    connect(client_fd, (struct sockaddr *)(&client_addr), len);
+    if(connect(client_fd, (struct sockaddr *)(&client_addr), sizeof(client_addr)) < 0)
+    {
+        printf("connect error!\n");
+        close(client_fd);
+        return 0;
+    }
     unsigned count = 0;
     pid_t pid = getpid();
     char buff[128];
@@ -27,11 +31,14 @@ int main()
     {
         sleep(2);
         int n = sprintf(buff, "Message %u From client %d", ++count, pid);
+        printf("Client %d send message %u", pid, count);
         if(write(client_fd, buff, n) != n)
         {
             close(client_fd);
             return 0;
         }
+        n = read(client_fd,buff,128);
+        printf("Receive massage from server: %s", buff);
     }
     return 0;
 }
