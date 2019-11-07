@@ -13,7 +13,7 @@
 
 struct fd_mutex_t
 {
-    int client_st;
+    int client_fd;
     pthread_mutex_t mutex;
 };
 
@@ -32,13 +32,15 @@ int main(int argc, char *argv[])
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的
 
     //监听
-    bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr));
-    listen(server_socket, 8);
 
+    if(bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+        printf("bind error!\n");
+    if(listen(server_socket, 8)<0)
+        printf("listen error!\n");
     //共享存储
     fd_mutex_t *fd_mutex = (fd_mutex_t*)mmap(NULL,sizeof(fd_mutex_t),PROT_READ|PROT_WRITE,MAP_SHARED|MAP_ANON,-1,0);
     pthread_mutex_init(&fd_mutex->mutex, NULL);
-    fd_mutex->client_st = -1;
+    fd_mutex->client_fd = -1;
     
     for (size_t i = 0; i < process_size; ++i)
     {
@@ -54,38 +56,70 @@ int main(int argc, char *argv[])
             argv[0][7] = '\0';
             argv[0][8] = '\0';
             argv[0][9] = '\0';
+            //close ununsed fd
+            close(fd[i][0][1]);
+            close(fd[i][1][0]);
             // srand(time(NULL));
             unsigned count = 0;
+            bool has_client = false;
+            int client = -1;
             while (true)
             {
                 sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
-                if(fd_mutex->client_st != -1)
+                if(!has_client && fd_mutex->client_fd != -1)
                 {
                     pthread_mutex_lock(&fd_mutex->mutex);
-                    if(fd_mutex->client_st != -1)
+                    if(fd_mutex->client_fd != -1)
                     {
-                        int n = sprintf(buff, "Hello,Clinet! This message %u from child process: %lu.\n",++count, i);
-                        printf("Child process: %lu send message %u", i, count);
-                        if(write(fd_mutex->client_st, buff, n) < n)
-                            printf(".   send failed\n");
-                        else
-                            printf(".   send success\n");
+                        printf("Child process %lu accept request %d\n",i,  fd_mutex->client_fd);
+                        client = dup(fd_mutex->client_fd);
+                        close(fd_mutex->client_fd);
+                        fd_mutex->client_fd = -1;
+                        has_client = true;
                     }
                     pthread_mutex_unlock(&fd_mutex->mutex);
                 }
-                
+                if(has_client)
+                {
+                    printf("get client\n");
+                    if(faccessat(client, ".", R_OK | W_OK, 0))
+                    {
+                        printf("Child process %lu client closed!\n", i);
+                        close(client);
+                        has_client = false;
+                        continue;
+                    }
+                    int n = read(client, buff, 256);
+                    if(n > 0)
+                        printf("Child process %lu receive message:%s\n", i, buff);
+                    else printf("Child process %lu receive message failed\n", i);
+                    n = sprintf(buff, "Hello,Clinet! This message %u from child process: %lu.\n",++count, i);
+                    printf("Child process %lu send message %u", i, count);
+                    if(write(client, buff, n) < n)
+                        printf(".   send failed\n");
+                    else
+                        printf(".   send success\n");
+                    
+                }
             }
+            exit(0);
         }
+        close(fd[i][0][0]);
+        close(fd[i][1][1]);
     }
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
-    int client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
-    pthread_mutex_lock(&fd_mutex->mutex);
-    printf("Parent process assign client fd %d\n", client_st);
-    fd_mutex->client_st = client_st;
-    pthread_mutex_unlock(&fd_mutex->mutex);
-    for (size_t i = process_size; i > 0; --i)
-        waitpid(pid[i - 1], NULL, 0);
+    while(true)
+    {
+        int client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
+        while(fd_mutex->client_fd != -1)
+            sleep(1);
+        pthread_mutex_lock(&fd_mutex->mutex);
+        printf("Parent process accept request %d\n",  client_st);
+        fd_mutex->client_fd = client_st;
+        pthread_mutex_unlock(&fd_mutex->mutex);
+    }
+
     exit(0);
 }
 
