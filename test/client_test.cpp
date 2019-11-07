@@ -30,7 +30,7 @@ int main()
     char buff[128];
     while (true)
     {
-        int n = sprintf(buff, "Message %u From client %d", ++count, pid);
+        int n = sprintf(buff, "Message %u From client %d.", ++count, pid);
         printf("Client %d send message %u\n", pid, count);
         if(write(client_fd, buff, n) != n)
         {

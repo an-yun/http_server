@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <time.h>
 #include <pthread.h>
+#include <sys/shm.h>
 
 #include "fd_transfer.h"
 
@@ -39,9 +40,8 @@ int main(int argc, char *argv[])
     if(listen(server_socket, 8)<0)
         printf("listen error!\n");
     //共享存储
-    fd_mutex_t *fd_mutex = (fd_mutex_t*)mmap(NULL,sizeof(fd_mutex_t),PROT_READ|PROT_WRITE,MAP_SHARED|MAP_ANON,-1,0);
-    pthread_mutex_init(&fd_mutex->mutex, NULL);
-    fd_mutex->process_num = -1;
+    key_t key = 1234;
+    fd_mutex_t *fd_mutex;
     
     for (size_t i = 0; i < process_size; ++i)
     {
@@ -54,28 +54,34 @@ int main(int argc, char *argv[])
         {
             //close ununsed fd
             close(fd[i][0]);
+            
             //change process name
             argv[0][6] = '0' + i;
             // srand(time(NULL));
+            int shmid = shmget(key,sizeof(fd_mutex_t),0666);
+            fd_mutex = (fd_mutex_t *)shmat(shmid, 0, 0);
             unsigned count = 0;
             bool has_client = false;
             int client = -1;
             while (true)
             {
                 sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
+                // printf("0-%d\n", fd_mutex->process_num);
                 if(!has_client && fd_mutex->process_num == -1)
                 {
                     pthread_mutex_lock(&fd_mutex->mutex);
-                    // printf("%d\n", fd_mutex->process_num);
+                    // printf("1-%d\n", fd_mutex->process_num);
                     if (fd_mutex->process_num == -1)
                     {
-                        printf("Child process %lu get request\n",i);
+                        printf("%d Child process %lu get request\n",fd_mutex->process_num, i);
                         fd_mutex->process_num = i;
                         has_client = true;
                     }
-                    // printf("%d\n", fd_mutex->process_num);
+                    // printf("2-%d\n", fd_mutex->process_num);
                     pthread_mutex_unlock(&fd_mutex->mutex);
                 }
+                // printf("3-%d\n", fd_mutex->process_num);
+
                 if(has_client)
                 {
                     if(client == -1)
@@ -119,6 +125,10 @@ int main(int argc, char *argv[])
         }
         close(fd[i][1]);
     }
+    int shmid = shmget(key,sizeof(fd_mutex_t),0666|IPC_CREAT);
+    fd_mutex = (fd_mutex_t *)shmat(shmid, 0, 0);
+    pthread_mutex_init(&fd_mutex->mutex, NULL);
+    fd_mutex->process_num = -1;
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
     while(true)
