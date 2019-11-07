@@ -19,7 +19,7 @@ struct fd_mutex_t
 
 int main(int argc, char *argv[])
 {
-    const size_t max_len = 256, process_size = 2;
+    const size_t max_len = 256, process_size = 4;
     char buff[max_len];
     pid_t pid[process_size];
     int fd[process_size][2][2]; //pip fd
@@ -42,6 +42,11 @@ int main(int argc, char *argv[])
     
     for (size_t i = 0; i < process_size; ++i)
     {
+        if (pipe(fd[i][0]) < 0 || pipe(fd[i][1]) < 0)
+        {
+            printf("pip error!");
+            exit(-1);
+        }
         if ((pid[i] = fork()) == 0) //chilr process
         {
             //change process name
@@ -49,11 +54,11 @@ int main(int argc, char *argv[])
             argv[0][7] = '\0';
             argv[0][8] = '\0';
             argv[0][9] = '\0';
-            srand(time(NULL));
+            // srand(time(NULL));
             unsigned count = 0;
             while (true)
             {
-                sleep(1 + rand() / ((RAND_MAX + 1u) / 8));
+                sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
                 if(fd_mutex->client_st != -1)
                 {
                     pthread_mutex_lock(&fd_mutex->mutex);
@@ -71,7 +76,6 @@ int main(int argc, char *argv[])
                 
             }
         }
-
     }
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
