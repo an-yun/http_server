@@ -22,6 +22,9 @@ int main(int argc, char *argv[])
     const size_t max_len = 256, process_size = 2;
     char buff[max_len];
     pid_t pid[process_size];
+    int fd[process_size][2][2]; //pip fd
+    
+    //初始化socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
@@ -36,8 +39,7 @@ int main(int argc, char *argv[])
     fd_mutex_t *fd_mutex = (fd_mutex_t*)mmap(NULL,sizeof(fd_mutex_t),PROT_READ|PROT_WRITE,MAP_SHARED|MAP_ANON,-1,0);
     pthread_mutex_init(&fd_mutex->mutex, NULL);
     fd_mutex->client_st = -1;
-
-    srand(time(NULL));
+    
     for (size_t i = 0; i < process_size; ++i)
     {
         if ((pid[i] = fork()) == 0) //chilr process
@@ -47,6 +49,7 @@ int main(int argc, char *argv[])
             argv[0][7] = '\0';
             argv[0][8] = '\0';
             argv[0][9] = '\0';
+            srand(time(NULL));
             unsigned count = 0;
             while (true)
             {

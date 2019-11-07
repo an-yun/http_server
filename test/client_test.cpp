@@ -30,15 +30,15 @@ int main()
     while (true)
     {
         sleep(2);
-        int n = sprintf(buff, "Message %u From client %d", ++count, pid);
+        int n = read(client_fd,buff,128);
+        printf("Receive massage from server: %s", buff);
+        n = sprintf(buff, "Message %u From client %d", ++count, pid);
         printf("Client %d send message %u", pid, count);
         if(write(client_fd, buff, n) != n)
         {
             close(client_fd);
             return 0;
         }
-        n = read(client_fd,buff,128);
-        printf("Receive massage from server: %s", buff);
     }
     return 0;
 }
