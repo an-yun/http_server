@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //IP地址设置成INADDR_ANY,让系统自动获取本机的
 
     //监听
-
     if(bind(server_socket, (sockaddr *)&server_addr, sizeof(server_addr)) < 0)
         printf("bind error!\n");
     if(listen(server_socket, 8)<0)
