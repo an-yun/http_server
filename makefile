@@ -13,7 +13,7 @@ TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
 
-SRCS=ioutils.cpp request.cpp connection.cpp server.cpp
+SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp server.cpp
 TEST=epoll_example.cpp epoll_server.cpp http_server.cpp add.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
 
 SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
