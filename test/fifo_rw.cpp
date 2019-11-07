@@ -15,7 +15,7 @@
 
 struct fd_mutex_t
 {
-    int client_fd;
+    int process_num;
     pthread_mutex_t mutex;
 };
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     //共享存储
     fd_mutex_t *fd_mutex = (fd_mutex_t*)mmap(NULL,sizeof(fd_mutex_t),PROT_READ|PROT_WRITE,MAP_SHARED|MAP_ANON,-1,0);
     pthread_mutex_init(&fd_mutex->mutex, NULL);
-    fd_mutex->client_fd = -1;
+    fd_mutex->process_num = -1;
     
     for (size_t i = 0; i < process_size; ++i)
     {
@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
         }
         if ((pid[i] = fork()) == 0) //chilr process
         {
-            //change process name
-            argv[0][6] = '0' + i;
             //close ununsed fd
             close(fd[i][0]);
+            //change process name
+            argv[0][6] = '0' + i;
             // srand(time(NULL));
             unsigned count = 0;
             bool has_client = false;
@@ -63,39 +63,55 @@ int main(int argc, char *argv[])
             while (true)
             {
                 sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
-                if(!has_client && fd_mutex->client_fd != -1)
+                if(!has_client && fd_mutex->process_num == -1)
                 {
                     pthread_mutex_lock(&fd_mutex->mutex);
-                    if(fd_mutex->client_fd != -1)
+                    // printf("%d\n", fd_mutex->process_num);
+                    if (fd_mutex->process_num == -1)
                     {
-                        printf("Child process %lu accept request %d\n",i,  fd_mutex->client_fd);
-                        client = dup(fd_mutex->client_fd);
-                        close(fd_mutex->client_fd);
-                        fd_mutex->client_fd = -1;
+                        printf("Child process %lu get request\n",i);
+                        fd_mutex->process_num = i;
                         has_client = true;
                     }
+                    // printf("%d\n", fd_mutex->process_num);
                     pthread_mutex_unlock(&fd_mutex->mutex);
                 }
                 if(has_client)
                 {
-                    printf("get client\n");
-                    if(faccessat(client, ".", R_OK | W_OK, 0))
+                    if(client == -1)
                     {
-                        printf("Child process %lu client closed!\n", i);
-                        close(client);
-                        has_client = false;
-                        continue;
+                        client = recv_fd(fd[i][1], write);
+                        printf("Child process %lu receive client %d\n",i, client);
                     }
+                    // if(faccessat(client, ".", R_OK | W_OK, 0))
+                    // {
+                    //     printf("Child process %lu client closed!\n", i);
+                    //     close(client);
+                    //     has_client = false;
+                    //     continue;
+                    // }
                     int n = read(client, buff, 256);
-                    if(n > 0)
+                    buff[n] = '\0';
+                    if (n > 0)
                         printf("Child process %lu receive message:%s\n", i, buff);
-                    else printf("Child process %lu receive message failed\n", i);
-                    n = sprintf(buff, "Hello,Clinet! This message %u from child process: %lu.\n",++count, i);
+                    else
+                    {
+                        printf("Child process %lu receive message failed.\n", i);
+                        close(client);
+                        client = -1;
+                        has_client = false;
+                    }
+                    n = sprintf(buff, "Hello,Clinet! This message %u from child process: %lu.",++count, i);
                     printf("Child process %lu send message %u", i, count);
                     if(write(client, buff, n) < n)
-                        printf(".   send failed\n");
+                    {
+                        printf(", send failed!\n");
+                        close(client);
+                        client = -1;
+                        has_client = false;
+                    }
                     else
-                        printf(".   send success\n");
+                        printf(", send success!\n");
                     
                 }
             }
@@ -107,12 +123,19 @@ int main(int argc, char *argv[])
     socklen_t len = sizeof(client_addr);
     while(true)
     {
-        int client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
-        while(fd_mutex->client_fd != -1)
+        int client_fd = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
+        while(fd_mutex->process_num == -1)
             sleep(1);
         pthread_mutex_lock(&fd_mutex->mutex);
-        printf("Parent process accept request %d\n",  client_st);
-        fd_mutex->client_fd = client_st;
+        int process_num = fd_mutex->process_num;
+        printf("Parent process assign request %d to process %d.\n", client_fd, process_num);
+        if(send_fd(fd[process_num][0], client_fd)< 0)
+        {
+            printf("send fd error!\n");
+            exit(0);
+        }
+        close(client_fd);
+        fd_mutex->process_num = -1;
         pthread_mutex_unlock(&fd_mutex->mutex);
     }
 

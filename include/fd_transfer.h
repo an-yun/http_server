@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#define MAXLINE 4096                    /* max line length */
+#define MAXLINE 1024                    /* max line length */
 /* size of control buffer to send/recv one file descriptor */
 #define	CONTROLLEN	CMSG_LEN(sizeof(int))
 

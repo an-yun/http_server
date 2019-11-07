@@ -28,19 +28,16 @@ int main()
     unsigned count = 0;
     pid_t pid = getpid();
     char buff[128];
-    printf("ok\n");
     while (true)
     {
-        int n = sprintf(buff, "Message %u From client %d\n", ++count, pid);
+        int n = sprintf(buff, "Message %u From client %d", ++count, pid);
         printf("Client %d send message %u\n", pid, count);
-        printf("ok\n");
         if(write(client_fd, buff, n) != n)
         {
             close(client_fd);
             return 0;
         }
-        printf("ok\n");
-        sleep(1);
+        sleep(2);
         n = read(client_fd,buff,128);
         printf("Receive massage from server: %s\n", buff);
     }
