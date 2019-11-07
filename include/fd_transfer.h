@@ -1,3 +1,6 @@
+#ifndef FD_TRANSFER_H
+#define FD_TRANSFER_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,3 +45,11 @@ ssize_t  readn(int fd, void *ptr, size_t n);
 
 /* Write "n" bytes to a descriptor  */
 ssize_t writen(int fd, const void *ptr, size_t n);
+
+/*
+ * Returns a full-duplex pipe (a UNIX domain socket) with
+ * the two file descriptors returned in fd[0] and fd[1].
+ */
+int fd_pipe(int fd[2]);
+
+#endif

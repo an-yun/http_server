@@ -34,6 +34,9 @@ run:install
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
 
+$(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h
+	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/fd_transfer.cpp -o $@
+
 $(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/request.cpp -o $@
 

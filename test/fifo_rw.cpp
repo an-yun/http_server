@@ -11,6 +11,8 @@
 #include <time.h>
 #include <pthread.h>
 
+#include "fd_transfer.h"
+
 struct fd_mutex_t
 {
     int client_fd;
@@ -22,7 +24,7 @@ int main(int argc, char *argv[])
     const size_t max_len = 256, process_size = 4;
     char buff[max_len];
     pid_t pid[process_size];
-    int fd[process_size][2][2]; //pip fd
+    int fd[process_size][2]; //pip fd
     
     //初始化socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,7 +45,7 @@ int main(int argc, char *argv[])
     
     for (size_t i = 0; i < process_size; ++i)
     {
-        if (pipe(fd[i][0]) < 0 || pipe(fd[i][1]) < 0)
+        if (fd_pipe(fd[i]) < 0)
         {
             printf("pip error!");
             exit(-1);
@@ -52,12 +54,8 @@ int main(int argc, char *argv[])
         {
             //change process name
             argv[0][6] = '0' + i;
-            argv[0][7] = '\0';
-            argv[0][8] = '\0';
-            argv[0][9] = '\0';
             //close ununsed fd
-            close(fd[i][0][1]);
-            close(fd[i][1][0]);
+            close(fd[i][0]);
             // srand(time(NULL));
             unsigned count = 0;
             bool has_client = false;
@@ -103,8 +101,7 @@ int main(int argc, char *argv[])
             }
             exit(0);
         }
-        close(fd[i][0][0]);
-        close(fd[i][1][1]);
+        close(fd[i][1]);
     }
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
