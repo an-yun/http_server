@@ -31,6 +31,10 @@ install:$(BINDIR) all
 run:install
 	$(BINDIR)/http_server web 8080
 
+
+test:all
+	$(TESTDIR)/fifo_rw.bin
+
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
 

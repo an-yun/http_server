@@ -40,8 +40,10 @@ int main(int argc, char *argv[])
     if(listen(server_socket, 8)<0)
         printf("listen error!\n");
     //共享存储
-    key_t key = 1234;
-    fd_mutex_t *fd_mutex;
+    int shmid = shmget(IPC_PRIVATE,sizeof(fd_mutex_t),0666|IPC_CREAT);
+    fd_mutex_t *fd_mutex = (fd_mutex_t *)shmat(shmid, 0, 0);
+    pthread_mutex_init(&fd_mutex->mutex, NULL);
+    fd_mutex->process_num = -1;
     
     for (size_t i = 0; i < process_size; ++i)
     {
@@ -54,27 +56,29 @@ int main(int argc, char *argv[])
         {
             //close ununsed fd
             close(fd[i][0]);
-            
             //change process name
             argv[0][6] = '0' + i;
-            // srand(time(NULL));
-            int shmid = shmget(key,sizeof(fd_mutex_t),0666);
-            fd_mutex = (fd_mutex_t *)shmat(shmid, 0, 0);
+            //set rand
+            srand(time(NULL)+i);
+            //
             unsigned count = 0;
             bool has_client = false;
             int client = -1;
             while (true)
             {
+                // usleep(800000-i);
                 sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
-                // printf("0-%d\n", fd_mutex->process_num);
+                printf("Process %zu client %d\n",i, client);
                 if(!has_client && fd_mutex->process_num == -1)
                 {
                     pthread_mutex_lock(&fd_mutex->mutex);
                     // printf("1-%d\n", fd_mutex->process_num);
                     if (fd_mutex->process_num == -1)
                     {
-                        printf("%d Child process %lu get request\n",fd_mutex->process_num, i);
+                        printf("%d==Child process %lu get request\n",fd_mutex->process_num, i);
                         fd_mutex->process_num = i;
+                        // msync(fd_mutex,sizeof(fd_mutex_t),MS_SYNC);
+                        // printf("==%d\n",fd_mutex->process_num);
                         has_client = true;
                     }
                     // printf("2-%d\n", fd_mutex->process_num);
@@ -89,13 +93,6 @@ int main(int argc, char *argv[])
                         client = recv_fd(fd[i][1], write);
                         printf("Child process %lu receive client %d\n",i, client);
                     }
-                    // if(faccessat(client, ".", R_OK | W_OK, 0))
-                    // {
-                    //     printf("Child process %lu client closed!\n", i);
-                    //     close(client);
-                    //     has_client = false;
-                    //     continue;
-                    // }
                     int n = read(client, buff, 256);
                     buff[n] = '\0';
                     if (n > 0)
@@ -125,10 +122,6 @@ int main(int argc, char *argv[])
         }
         close(fd[i][1]);
     }
-    int shmid = shmget(key,sizeof(fd_mutex_t),0666|IPC_CREAT);
-    fd_mutex = (fd_mutex_t *)shmat(shmid, 0, 0);
-    pthread_mutex_init(&fd_mutex->mutex, NULL);
-    fd_mutex->process_num = -1;
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
     while(true)
@@ -146,6 +139,7 @@ int main(int argc, char *argv[])
         }
         close(client_fd);
         fd_mutex->process_num = -1;
+        // msync(fd_mutex,sizeof(fd_mutex_t),MS_SYNC);
         pthread_mutex_unlock(&fd_mutex->mutex);
     }
 
