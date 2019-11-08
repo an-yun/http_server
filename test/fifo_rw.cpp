@@ -22,7 +22,7 @@ struct fd_mutex_t
 
 int main(int argc, char *argv[])
 {
-    const size_t max_len = 256, process_size = 4;
+    const size_t max_len = 256, process_size = 8;
     char buff[max_len];
     pid_t pid[process_size];
     int fd[process_size][2]; //pip fd
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
             while (true)
             {
                 // usleep(800000-i);
-                sleep(1 + rand() / ((RAND_MAX + 1u) / process_size));
+                sleep(1 + rand() / ((RAND_MAX + 1u) / 4));
                 printf("Process %zu client %d\n",i, client);
                 if(!has_client && fd_mutex->process_num == -1)
                 {
