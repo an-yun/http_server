@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <limits>
 #include <map>
+#include <cstring>
 
 enum RequestMethod
 {
@@ -40,7 +41,9 @@ class Request
     public:
         Request(const char * request_str= nullptr, size_t n = SIZE_MAX) ;
         Request(const string & requst_str);
-        
+        Request(const Request &) = default;
+        Request(Request &&) = default;
+
         size_t parse_request(const char * request_str, size_t n);
         string get_request_path() const;
         const map<string, string> &get_request_parameter();

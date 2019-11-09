@@ -1,8 +1,18 @@
 #include "connection.h"
 
 Connection::Connection()
-    : buff(Connection::max_len, ' '), request()
+    : request(), client_st(-1), buff(Connection::max_len, ' ')
 {
+}
+
+Connection::Connection(Connection &&con)
+    : request(std::move(con.request)),
+      request_path(std::move(con.request_path)),
+      buff(std::move(con.buff))
+{
+    client_st = con.client_st;
+    client_address = con.client_address;
+    client_st = -1;
 }
 
 const Request &Connection::get_request()
@@ -24,7 +34,7 @@ std::string Connection::receive(size_t len)
 {
     if (len > buff.length())
         buff.resize(len + 16);
-    size_t n = ::recv(client_st, buff.data(), len, 0);
+    size_t n = ::recv(client_st, (void *)buff.data(), len, 0);
     return buff.substr(0, n);
 }
 
@@ -45,5 +55,6 @@ bool Connection::close()
 }
 Connection::~Connection()
 {
-    close();
+    if (client_st != -1)
+        close();
 }

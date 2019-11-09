@@ -17,24 +17,28 @@ public:
   static const size_t fail_size = static_cast<size_t>(-1);
   static const size_t max_len = 1024;
 
+  Connection(Connection &&con);
   const Request &get_request();
   size_t send(const char *content, size_t len);
   size_t send(const std::string &content);
   std::string receive(size_t len = max_len);
   std::string get_client_ip() const;
   std::string get_request_path() const;
-  bool close();
+
   ~Connection();
 
 private:
+  Request request;
+
   int client_st;
   std::string request_path;
   sockaddr_in client_address;
   std::string buff;
 
-  Request request;
   //private construction
   Connection();
+
+  bool close();
 };
 
 #endif

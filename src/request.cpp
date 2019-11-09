@@ -1,6 +1,4 @@
 #include "request.h"
-#include <algorithm>
-#include <cstring>
 
 Request::Request(const char *request_str, size_t n)
 {

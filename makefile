@@ -13,7 +13,7 @@ TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
 
-SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp server.cpp
+SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp worker.cpp server.cpp
 TEST=epoll_example.cpp epoll_server.cpp http_server.cpp add.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
 
 SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
@@ -46,6 +46,9 @@ $(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
 
 $(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/connection.cpp -o $@
+
+$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h
+	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/worker.cpp -o $@
 
 $(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/server.cpp -o $@
