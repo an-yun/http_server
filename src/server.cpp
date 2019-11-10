@@ -136,3 +136,13 @@ std::string get_ip_address(const sockaddr_in &client_addr)
     return inet_ntoa(client_addr.sin_addr);;
 }
 
+void Server::test_connection()
+{
+    Connection con;
+    con.buff = "buff";
+    con.client_st = 1;
+    println(con.client_st, con.buff);
+    Connection con1 = std::move(con);
+    println(con.client_st, con.buff);
+    println(con1.client_st, con1.buff);
+}

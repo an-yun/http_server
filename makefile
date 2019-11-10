@@ -14,7 +14,7 @@ INLCUDEDIR=$(ROOT)/include
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
 
 SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp worker.cpp server.cpp
-TEST=epoll_example.cpp epoll_server.cpp http_server.cpp add.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
+TEST=epoll_example.cpp epoll_server.cpp http_server.cpp test_src.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
 
 SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
 TEST_FILES=$(addprefix $(TESTDIR)/, $(TEST))
@@ -33,7 +33,7 @@ run:install
 
 
 test:all
-	$(TESTDIR)/fifo_rw.bin
+	$(TESTDIR)/test_src.bin
 
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@

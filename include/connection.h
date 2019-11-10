@@ -11,6 +11,7 @@
 class Connection
 {
   friend class Server;
+  // friend class Worker;
 
 public:
   typedef in_addr_t ip_t;
@@ -18,6 +19,7 @@ public:
   static const size_t max_len = 1024;
 
   Connection(Connection &&con);
+  Connection &operator=(Connection &&con) = default;
   const Request &get_request();
   size_t send(const char *content, size_t len);
   size_t send(const std::string &content);

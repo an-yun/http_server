@@ -2,6 +2,7 @@
 #define WORKER_H
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "connection.h"
 
