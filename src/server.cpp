@@ -145,4 +145,6 @@ void Server::test_connection()
     Connection con1 = std::move(con);
     println(con.client_st, con.buff);
     println(con1.client_st, con1.buff);
+    std::move(con1);
+    println(con1.client_st, con1.buff);
 }

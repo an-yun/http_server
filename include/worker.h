@@ -15,6 +15,7 @@ private:
 
 public:
   Worker(Connection &&con, const std::string &web_root);
+  bool set_connectino(Connection &&con);
   ~Worker();
 };
 

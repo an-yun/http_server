@@ -12,7 +12,7 @@ Connection::Connection(Connection &&con)
 {
     client_st = con.client_st;
     client_address = con.client_address;
-    client_st = -1;
+    con.client_st = -1;
 }
 
 const Request &Connection::get_request()
@@ -50,7 +50,9 @@ std::string Connection::get_request_path() const
 
 bool Connection::close()
 {
-    ::close(client_st);
+    if(client_st != -1)
+        ::close(client_st);
+    client_st = -1;
     return true;
 }
 Connection::~Connection()
