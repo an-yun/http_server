@@ -13,8 +13,10 @@ TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
 
+CURRENT_VERSION=single_http_server
+
 SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp worker.cpp server.cpp
-TEST=epoll_example.cpp epoll_server.cpp http_server.cpp test_src.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
+TEST=epoll_example.cpp epoll_server.cpp single_http_server.cpp test_src.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
 
 SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
 TEST_FILES=$(addprefix $(TESTDIR)/, $(TEST))
@@ -26,7 +28,7 @@ TEST_TARGET=$(TEST_FILES:.cpp=.bin)
 all:$(SRCS_TARGET) $(TEST_TARGET)
 
 install:$(BINDIR) all
-	cp -f $(TESTDIR)/http_server.bin $(BINDIR)/http_server
+	cp -f $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)/http_server
 
 run:install
 	$(BINDIR)/http_server web 8080
