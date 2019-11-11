@@ -32,7 +32,6 @@ int main(int argc, char *argv[])
         while (true)
         {
             Connection connection = server.wait_connection();
-            println(connection.get_request_path());
             const std::string &file_path = server.get_web_path();
             std::string file_name = connection.get_request_path();
             size_t response_code = 200;
