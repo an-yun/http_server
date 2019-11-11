@@ -62,10 +62,15 @@ HTTP服务器的单进程版的进展和To-do list如下:
 
 
 初版优化进展和To-do list:
-1. 添加初版文档，测试一些复杂网页。`√ 2019 11-08` 
-2. 优化server的wait_connection方法，尽量不使用友元。 Connection的parse_request方法改为public，加入健壮性判断。`√ 2019 11-11` 
-3. 添加Response类，负责生成响应头和响应内容。
-4. Connection加入reponse方法，减少与Server的耦合。
+1. 添加初版文档，测试一些复杂网页。√ 2019 11-08 
+2. 优化server的wait_connection方法，尽量不使用友元。 Connection的parse_request方法改为public，加入健壮性判断。
+3. 设计Response类，负责生成响应头和响应内容。Connection加入reponse方法，减少与Server的耦合。
+
+
+
+类的功能和设计如下表：
+
+
 ## 多进程HTTP服务器
 单进程的HTTP服务器缺点很明显，同一时刻只能响应一个HTTP请求，大分部的时间片都耗费在IO上。我们对服务器加入多进程的支持，就能在一定程度上解决这个问题。
 
