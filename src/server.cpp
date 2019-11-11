@@ -31,22 +31,16 @@ void Server::dispatch_request()
 
 Connection Server::wait_connection(unsigned time_out)
 {
-    Connection conection;
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
-    int client_st;
-    char buff[max_len];
-    while ((client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len)) == -1)
+    int client_st =::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
+    while (!time_out  && client_st == -1)
     {
-        sprintf(buff, "listen error:%s(error: %d)\n", strerror(errno), errno);
-        error_message = buff;
+        error_message = std::string("listen error:")+ strerror(errno) + std::to_string(errno);
+        client_st = ::accept(server_socket, (struct sockaddr *)(&client_addr), &len);
+        --time_out;
     }
-    size_t n = recv(client_st, buff, max_len, 0);
-    conection.request.parse_request(buff, n);
-    conection.request_path = web_root_path + conection.request.get_request_path();
-    conection.client_st = client_st;
-    conection.client_address = client_addr;
-    return conection;
+    return Connection(web_root_path, client_st, client_addr);
 }
 
 int Server::bind_and_listen()
@@ -136,6 +130,7 @@ std::string get_ip_address(const sockaddr_in &client_addr)
     return inet_ntoa(client_addr.sin_addr);;
 }
 
+#ifdef TEST
 void Server::test_connection()
 {
     Connection con;
@@ -148,3 +143,4 @@ void Server::test_connection()
     std::move(con1);
     println(con1.client_st, con1.buff);
 }
+  #endif

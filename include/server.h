@@ -19,7 +19,10 @@ public:
   //public type and constance
   static const unsigned forever = std::numeric_limits<unsigned>::max();
   static const size_t max_len = 1024;
-  static void test_connection();
+  
+  #ifdef TEST
+    static void test_connection();
+  #endif
 
   Server(std::string web_root_path = "../web", int listen_port = 8080);
   bool start();

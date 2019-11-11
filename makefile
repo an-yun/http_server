@@ -11,7 +11,8 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g 
+CXXFLAGS=-std=c++17 -stdlib=libc++ -I$(INLCUDEDIR) -Wall -g -DTEST
+#-stdlib=libc++ -lpthread
 
 CURRENT_VERSION=single_http_server
 
@@ -25,14 +26,14 @@ SRCS_TARGET=$(SRCS_FILES:.cpp=.o)
 TEST_TARGET=$(TEST_FILES:.cpp=.bin)
 
 
-all:$(SRCS_TARGET) $(TEST_TARGET)
-
-install:$(BINDIR) all
+all:$(SRCS_TARGET) $(TEST_TARGET) $(BINDIR)
 	cp -f $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)/http_server
+
+# install:$(BINDIR) all
+# 	cp -f $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)/http_server
 
 run:install
 	$(BINDIR)/http_server web 8080
-
 
 test:all
 	$(TESTDIR)/test_src.bin
