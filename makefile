@@ -11,7 +11,7 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -stdlib=libc++ -I$(INLCUDEDIR) -Wall -g -DTEST
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -DTEST
 #-stdlib=libc++ -lpthread
 
 CURRENT_VERSION=single_http_server
