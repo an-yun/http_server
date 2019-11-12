@@ -6,7 +6,8 @@
             "label": "Linux Compile", // 任务名称，与launch.json的preLaunchTask相对应
             "command": "make", // 要使用的编译器
             "args": [
-                
+                "-j",
+                "4"
             ],
             "presentation": {
                 "echo": true,
