@@ -16,7 +16,7 @@ CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -DTEST
 
 CURRENT_VERSION=single_http_server
 
-SRCS=ioutils.cpp fd_transfer.cpp request.cpp connection.cpp worker.cpp server.cpp
+SRCS=ioutils.cpp fd_transfer.cpp request.cpp response.cpp connection.cpp worker.cpp server.cpp
 TEST=epoll_example.cpp epoll_server.cpp single_http_server.cpp test_src.cpp pip_dup.cpp client_test.cpp fifo_rw.cpp
 
 SRCS_FILES=$(addprefix $(SRCDIR)/, $(SRCS))
@@ -46,6 +46,9 @@ $(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h
 
 $(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/request.cpp -o $@
+
+$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h
+	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/response.cpp -o $@
 
 $(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/connection.cpp -o $@
