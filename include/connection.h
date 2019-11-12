@@ -29,7 +29,12 @@ public:
   Connection& operator=(Connection &) = delete;
   Connection(Connection &&con);
   Connection &operator=(Connection &&con) = default;
+
+  //获取请求对象
   const Request &get_request();
+  //发送响应
+  size_t response();
+
   size_t send(const char *content, size_t len);
   size_t send(const std::string &content);
   size_t receive(size_t len = max_len);

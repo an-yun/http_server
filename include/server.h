@@ -25,9 +25,12 @@ public:
   #endif
 
   Server(std::string web_root_path = "../web", int listen_port = 8080);
+  //启动服务器，绑定并监听
   bool start();
   void dispatch_request();
+  //阻塞等待连接
   Connection wait_connection(unsigned time_out = forever);
+  //获取web根目录
   const std::string & get_web_path();
   std::string get_error_mess(); //if an error occur, return the error message else return empty std::string
   void close();
