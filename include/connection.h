@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "request.h"
+#include "response.h"
 
 class Connection
 {
@@ -33,7 +34,7 @@ public:
   //获取请求对象
   const Request &get_request();
   //发送响应
-  size_t response();
+  size_t response_to_client();
 
   size_t send(const char *content, size_t len);
   size_t send(const std::string &content);
@@ -48,6 +49,7 @@ private:
   sockaddr_in client_address;
   std::string buff;
   Request request;
+  Response response;
 
   std::string request_path;
   bool close();

@@ -50,10 +50,10 @@ $(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
 $(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/response.cpp -o $@
 
-$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h
+$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/response.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/connection.cpp -o $@
 
-$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h
+$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/worker.cpp -o $@
 
 $(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h

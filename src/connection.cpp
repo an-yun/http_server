@@ -8,6 +8,7 @@ Connection::Connection(const std::string &web_root_path, int client_st, const so
     size_t n = receive();
     request = Request(buff.c_str(),n);
     request_path = web_root_path + request.get_request_path();
+    response = Response(request_path);
 #ifdef LOG
     printf("Connection default ok\n");
 #endif
@@ -17,6 +18,7 @@ Connection::Connection(Connection &&con)
     : client_st(con.client_st),
       buff(std::move(con.buff)),
       request(std::move(con.request)),
+      response(std::move(con.response)),
       request_path(std::move(con.request_path))
       
 {
@@ -32,7 +34,7 @@ const Request &Connection::get_request()
     return request;
 }
 
-size_t Connection::response()
+size_t Connection::response_to_client()
 {
     // to do
     return 0;

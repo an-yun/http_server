@@ -53,7 +53,7 @@ class Request
         string get_error_message();
     
     private:
-        
+    
         size_t parse_hosts(const char *request_str, size_t n);
         size_t parse_connection_type(const char *request_str, size_t n);
         size_t parse_user_agent(const char *request_str, size_t n);
