@@ -36,8 +36,7 @@ const Request &Connection::get_request()
 
 size_t Connection::response_to_client()
 {
-    // to do
-    return 0;
+    return response.response_to(client_st);
 }
 
 size_t Connection::send(const char *content, size_t len)

@@ -47,7 +47,7 @@ $(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h
 $(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/request.cpp -o $@
 
-$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h
+$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/response.cpp -o $@
 
 $(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/response.h
