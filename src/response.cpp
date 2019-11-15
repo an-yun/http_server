@@ -65,7 +65,6 @@ size_t Response::response_to(int client_fd)
             if(validate(index_path))
                 request_path = index_path;
         }
-        println(request_path);
         if (get_file_size(request_path) != fail_size)
             return response_head_to(client_fd) + response_body_to(client_fd);
     }

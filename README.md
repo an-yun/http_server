@@ -74,7 +74,7 @@ HTTP服务器的单进程版的进展和To-do list如下:
 初版优化进展和To-do list:
 1. 添加初版文档，测试一些复杂网页。 `√ 2019 11-08`
 2. 优化server的wait_connection方法，尽量不使用友元。 Connection的parse_request方法改为public，加入健壮性判断。`√ 2019 11-11`
-3. 设计Response类，负责生成响应头和响应内容。Connection加入reponse方法，减少与Server的耦合。
+3. 设计Response类，负责生成响应头和响应内容。Connection加入reponse方法，减少与Server的耦合。`√ 2019 11-15`
 
 
 

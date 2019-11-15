@@ -22,8 +22,7 @@ int main(int argc, char *argv[])
             println(server.get_error_mess());
             return -1;
         }
-        println("bind and listen ok");
-
+        println("bind and listen on:", argv[2]);
         signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/
         signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
         while (true)
