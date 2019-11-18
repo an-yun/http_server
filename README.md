@@ -96,7 +96,7 @@ HTTP服务器的单进程版的进展和To-do list如下:
     - 添加set_connection方法用于设置新的待处理的连接，并向Connection中添加移动构造和移动赋值方法。 `√2019 11-10`
     - 添加handle方法，循环处理连接。
 4. 实现Woker类串行并发处理多个Connection：
-    - 
+    - 加入事件处理机制
 
 
 
