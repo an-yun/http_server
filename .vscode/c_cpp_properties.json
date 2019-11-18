@@ -17,7 +17,7 @@
                 "${workspaceFolder}",
                 "${workspaceFolder}/include"
             ],
-            "defines": [],
+            "defines": ["TEST=1"],
             "compilerPath": "/usr/bin/clang++",
             "cStandard": "c11",
             "cppStandard": "c++17",
