@@ -4,14 +4,14 @@
 Worker::Worker(const std::string &web_root)
     :web_root_path(web_root)
 {
-#ifdef LOG
+#ifdef TEST
     printf("ok\n");
 #endif
 }
 
 bool Worker::set_connection(Connection &&con)
 {
-#ifdef LOG
+#ifdef TEST
     printf("set_connection right\n");
 #endif
     single_connection = std::make_shared<Connection>(std::move(con));

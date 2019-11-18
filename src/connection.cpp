@@ -3,9 +3,7 @@
 #ifdef TEST
 Connection::Connection()
 {
-#ifdef LOG
     printf("Connection default ok\n");
-#endif 
 }
 #endif
 
@@ -18,7 +16,7 @@ Connection::Connection(const std::string &web_root_path, int client_st, const so
     request = Request(buff.c_str(),n);
     request_path = web_root_path + request.get_request_path();
     response = Response(request_path);
-#ifdef LOG
+#ifdef TEST
     printf("Connection manual ok\n");
 #endif
 }
@@ -33,7 +31,7 @@ Connection::Connection(Connection &&con) noexcept
 {
     client_address = con.client_address;
     con.client_st = -1;
-#ifdef LOG
+#ifdef TEST
     printf("Connection move ok\n");
 #endif
 }

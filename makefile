@@ -1,6 +1,7 @@
 # 定义编译环境
 #
 ROOT=.#$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+MKFILE_PATH=$(abspath $(lastword $(MAKEFILE_LIST)))
 CXX=clang++
 LINK.cxx=$(CXX) $(CXXFLAGS) $(LDFLAGS)
 LDFLAGS=
@@ -11,7 +12,8 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -DTEST -DLOG
+TESTFLAGS=-DTEST
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g $(TESTFLAGS)
 #-stdlib=libc++ -lpthread
 
 CURRENT_VERSION=single_http_server
@@ -33,54 +35,54 @@ all:$(SRCS_TARGET) $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)
 run:all
 	$(BINDIR)/http_server web 8080
 
-test:$(TESTDIR)/test_src.bin
-	$(TESTDIR)/test_src.bin
+test:$(TEST_TARGET)
+	@echo makefile in $(MKFILE_PATH)
 
-$(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
+$(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
 
-$(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h
+$(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/fd_transfer.cpp -o $@
 
-$(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h
+$(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/request.cpp -o $@
 
-$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h $(INLCUDEDIR)/ioutils.h
+$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/response.cpp -o $@
 
-$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/response.h
+$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/response.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/connection.cpp -o $@
 
-$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h
+$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/worker.cpp -o $@
 
-$(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h
+$(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/server.cpp -o $@
 
 
 
-$(TESTDIR)/epoll_example.bin:$(TESTDIR)/epoll_example.cpp
+$(TESTDIR)/epoll_example.bin:$(TESTDIR)/epoll_example.cpp $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/epoll_example.cpp -o $@
 
-$(TESTDIR)/client_test.bin:$(TESTDIR)/client_test.cpp
+$(TESTDIR)/client_test.bin:$(TESTDIR)/client_test.cpp $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/client_test.cpp -o $@
 
-$(TESTDIR)/pip_dup.bin:$(TESTDIR)/pip_dup.cpp
+$(TESTDIR)/pip_dup.bin:$(TESTDIR)/pip_dup.cpp $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/pip_dup.cpp -o $@
 
-$(TESTDIR)/epoll_server.bin:$(TESTDIR)/epoll_server.cpp
+$(TESTDIR)/epoll_server.bin:$(TESTDIR)/epoll_server.cpp $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/epoll_server.cpp -o $@
 
-$(TESTDIR)/fifo_rw.bin:$(TESTDIR)/fifo_rw.cpp $(INLCUDEDIR)/fd_transfer.h $(SRCDIR)/fd_transfer.cpp
-	$(CXX) $(CXXFLAGS) $(TESTDIR)/fifo_rw.cpp -o $@
+$(TESTDIR)/fifo_rw.bin:$(TESTDIR)/fifo_rw.cpp $(SRCDIR)/fd_transfer.o $(MKFILE_PATH)
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/fifo_rw.cpp $(SRCDIR)/fd_transfer.o -o $@
 
-$(TESTDIR)/test_src.bin:$(TESTDIR)/test_src.cpp $(SRCS_TARGET)
+$(TESTDIR)/test_src.bin:$(TESTDIR)/test_src.cpp $(SRCS_TARGET) $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/test_src.cpp $(SRCS_TARGET) -o $@	
 
-$(TESTDIR)/single_http_server.bin:$(TESTDIR)/single_http_server.cpp $(SRCS_TARGET)
+$(TESTDIR)/single_http_server.bin:$(TESTDIR)/single_http_server.cpp $(SRCS_TARGET) $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $< $(SRCS_TARGET)  -o $@
 
-$(BINDIR):
+$(BINDIR): $(MKFILE_PATH)
 	mkdir $(BINDIR)
 
 clean:
