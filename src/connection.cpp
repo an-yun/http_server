@@ -1,5 +1,14 @@
 #include "connection.h"
 
+#ifdef TEST
+Connection::Connection()
+{
+#ifdef LOG
+    printf("Connection default ok\n");
+#endif 
+}
+#endif
+
 Connection::Connection(const std::string &web_root_path, int client_st, const sockaddr_in &client_address)
     : client_st(client_st),
      client_address(client_address),
@@ -10,11 +19,11 @@ Connection::Connection(const std::string &web_root_path, int client_st, const so
     request_path = web_root_path + request.get_request_path();
     response = Response(request_path);
 #ifdef LOG
-    printf("Connection default ok\n");
+    printf("Connection manual ok\n");
 #endif
 }
 
-Connection::Connection(Connection &&con)
+Connection::Connection(Connection &&con) noexcept
     : client_st(con.client_st),
       buff(std::move(con.buff)),
       request(std::move(con.request)),

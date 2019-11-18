@@ -91,10 +91,13 @@ HTTP服务器的单进程版的进展和To-do list如下:
     - 共享存储：通讯竞争可行，但直接跨进程读写文件描述符失败。 `√ 2019 11-07`
     - socketpair双工管道：参照apue第15章，成功传送文件描述符。`√ 2019 11-07`
 2. 结合共享存储与互斥量，实现各个进程对连接的竞争。√ 2019 11-08 
-3. 实现Woker类串行处理Connection：
+3. 实现Woker类串行处理单个Connection：
     - 添加connection_finish方法，返回当前连接是否处理完成.
     - 添加set_connection方法用于设置新的待处理的连接，并向Connection中添加移动构造和移动赋值方法。 `√2019 11-10`
     - 添加handle方法，循环处理连接。
+4. 实现Woker类串行并发处理多个Connection：
+    - 
+
 
 
 

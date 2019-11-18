@@ -11,7 +11,7 @@ BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -DTEST
+CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g -DTEST -DLOG
 #-stdlib=libc++ -lpthread
 
 CURRENT_VERSION=single_http_server
@@ -26,16 +26,14 @@ SRCS_TARGET=$(SRCS_FILES:.cpp=.o)
 TEST_TARGET=$(TEST_FILES:.cpp=.bin)
 
 
-all:$(SRCS_TARGET) $(TEST_TARGET) $(BINDIR)
+all:$(SRCS_TARGET) $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)
 	cp -f $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)/http_server
 
-# install:$(BINDIR) all
-# 	cp -f $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)/http_server
 
-run:install
+run:all
 	$(BINDIR)/http_server web 8080
 
-test:all
+test:$(TESTDIR)/test_src.bin
 	$(TESTDIR)/test_src.bin
 
 $(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h
@@ -59,7 +57,27 @@ $(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/con
 $(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/server.cpp -o $@
 
-$(TEST_TARGET):$(TESTDIR)/%.bin:$(TESTDIR)/%.cpp $(SRCS_TARGET)
+
+
+$(TESTDIR)/epoll_example.bin:$(TESTDIR)/epoll_example.cpp
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/epoll_example.cpp -o $@
+
+$(TESTDIR)/client_test.bin:$(TESTDIR)/client_test.cpp
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/client_test.cpp -o $@
+
+$(TESTDIR)/pip_dup.bin:$(TESTDIR)/pip_dup.cpp
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/pip_dup.cpp -o $@
+
+$(TESTDIR)/epoll_server.bin:$(TESTDIR)/epoll_server.cpp
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/epoll_server.cpp -o $@
+
+$(TESTDIR)/fifo_rw.bin:$(TESTDIR)/fifo_rw.cpp $(INLCUDEDIR)/fd_transfer.h $(SRCDIR)/fd_transfer.cpp
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/fifo_rw.cpp -o $@
+
+$(TESTDIR)/test_src.bin:$(TESTDIR)/test_src.cpp $(SRCS_TARGET)
+	$(CXX) $(CXXFLAGS) $(TESTDIR)/test_src.cpp $(SRCS_TARGET) -o $@	
+
+$(TESTDIR)/single_http_server.bin:$(TESTDIR)/single_http_server.cpp $(SRCS_TARGET)
 	$(CXX) $(CXXFLAGS) $< $(SRCS_TARGET)  -o $@
 
 $(BINDIR):

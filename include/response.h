@@ -37,7 +37,7 @@ class Response
   public:
     static const size_t max_len = 1024;
     Response(const std::string &request_path="", bool index_enabled = true);
-    Response(Response &&) = default;
+    Response(Response &&) noexcept = default;
     Response &operator=(Response &&) = default;
 
     //向client_fd发送响应

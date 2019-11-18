@@ -43,7 +43,7 @@ class Request
         Request(const string & requst_str);
         Request(const Request &) = default;
         Request &operator=(const Request &) = default;
-        Request(Request &&) = default;
+        Request(Request &&) noexcept = default;
         Request &operator=(Request &&) = default;
 
         size_t parse_request(const char * request_str, size_t n);

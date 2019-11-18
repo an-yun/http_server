@@ -1,5 +1,6 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
+
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,13 +23,15 @@ public:
   static const size_t max_len = 1024;
 
   #ifdef TEST
-    Connection() = default;
-  #endif
+  Connection();
+#endif
 
   Connection(const std::string &request_path, int client_st, const sockaddr_in &client_address);
   Connection(const Connection &) = delete;
   Connection& operator=(Connection &) = delete;
-  Connection(Connection &&con);
+
+  //右值构造函数需要是noexcept，保证移动构造安全，否则构造失败则原对象状态被修改
+  Connection(Connection &&con) noexcept;
   Connection &operator=(Connection &&con) = default;
 
   //获取请求对象
