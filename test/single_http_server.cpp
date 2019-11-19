@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
         println("bind and listen on:", argv[2]);
         signal(SIGINT, Server::catch_signal);  /*捕捉SIGINT信号 Ctrl+C*/
         signal(SIGTERM, Server::catch_signal); //捕捉SIGINT信号 kill http_server
+        Server::set_404_path(std::string(argv[1]) + "/404.html");
         while (true)
         {
             Connection connection = server.wait_connection();

@@ -123,6 +123,11 @@ void Server::catch_signal(int sign)
     }
 }
 
+void Server::set_404_path(const std::string &default_404)
+{
+    Response::set_default_404(default_404);
+}
+
 std::set<Server *> Server::all_servers;
 
 std::string get_ip_address(const sockaddr_in &client_addr)

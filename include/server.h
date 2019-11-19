@@ -38,6 +38,7 @@ public:
   ~Server();
 
   static void catch_signal(int sign);
+  static void set_404_path(const std::string &default_404);
 
 private:
   //private function
