@@ -3,13 +3,16 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <pthread.h>
 
 #include "connection.h"
 
 class Worker
 {
 private:
-    /* data */
+  /* data */
+  //先使用pthread设施同步
+  pthread_mutex_t connection_mutex;
   //对于单个连接
   std::shared_ptr<Connection> single_connection;
   //对于多个连接
@@ -37,6 +40,8 @@ public:
   */
   bool set_connection(Connection &&con);
   bool add_connection(Connection &&con);
+  //当前连接是否处理完成
+  bool connection_finish();
 
   ~Worker();
 

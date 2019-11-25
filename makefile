@@ -4,7 +4,7 @@ ROOT=.#$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 MKFILE_PATH=$(abspath $(lastword $(MAKEFILE_LIST)))
 CXX=clang++
 LINK.cxx=$(CXX) $(CXXFLAGS) $(LDFLAGS)
-LDFLAGS=
+LDFLAGS=-lpthread
 LDDIR=-L$(ROOT)/lib
 LDLIBS=$(LDDIR) #-l xxxlib
 BUILDDIR=$(ROOT)/build
@@ -77,10 +77,10 @@ $(TESTDIR)/fifo_rw.bin:$(TESTDIR)/fifo_rw.cpp $(SRCDIR)/fd_transfer.o $(MKFILE_P
 	$(CXX) $(CXXFLAGS) $(TESTDIR)/fifo_rw.cpp $(SRCDIR)/fd_transfer.o -o $@
 
 $(TESTDIR)/test_src.bin:$(TESTDIR)/test_src.cpp $(SRCS_TARGET) $(MKFILE_PATH)
-	$(CXX) $(CXXFLAGS) $(TESTDIR)/test_src.cpp $(SRCS_TARGET) -o $@	
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(TESTDIR)/test_src.cpp $(SRCS_TARGET) -o $@	
 
 $(TESTDIR)/single_http_server.bin:$(TESTDIR)/single_http_server.cpp $(SRCS_TARGET) $(MKFILE_PATH)
-	$(CXX) $(CXXFLAGS) $< $(SRCS_TARGET)  -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< $(SRCS_TARGET)  -o $@
 
 $(BINDIR): $(MKFILE_PATH)
 	mkdir $(BINDIR)

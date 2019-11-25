@@ -4,6 +4,10 @@
 Worker::Worker(const std::string &web_root)
     :web_root_path(web_root)
 {
+    if(pthread_mutex_init(&connection_mutex,nullptr)<0)
+    {
+        println("init pthread mutex error!");
+    }
 #ifdef TEST
     printf("ok\n");
 #endif
@@ -14,7 +18,10 @@ bool Worker::set_connection(Connection &&con)
 #ifdef TEST
     printf("set_connection right\n");
 #endif
+    if(pthread_mutex_trylock(&connection_mutex)== EBUSY)
+        return false;
     single_connection = std::make_shared<Connection>(std::move(con));
+    pthread_mutex_unlock(&connection_mutex);
     return true;
 }
 
@@ -24,10 +31,17 @@ bool Worker::add_connection(Connection &&con)
     return true;
 }
 
-
+bool Worker::connection_finish()
+{
+    if(pthread_mutex_trylock(&connection_mutex)== EBUSY)
+        return false;
+    pthread_mutex_unlock(&connection_mutex);
+    return true;
+}
 
 Worker::~Worker()
 {
+    pthread_mutex_destroy(&connection_mutex);
 }
 
 #ifdef TEST
