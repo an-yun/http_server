@@ -49,6 +49,7 @@ public:
   #ifdef TEST
   static void test_connection();
   #endif
+
 };
 
 #endif

@@ -75,10 +75,11 @@ HTTP服务器的单进程版的进展和To-do list如下:
 1. 添加初版文档，测试一些复杂网页。 `√ 2019 11-08`
 2. 优化server的wait_connection方法，尽量不使用友元。 Connection的parse_request方法改为public，加入健壮性判断。`√ 2019 11-11`
 3. 设计Response类，负责生成响应头和响应内容。Connection加入reponse方法，减少与Server的耦合。`√ 2019 11-15`
+4. 增加文件目录浏览功能。
 
 
 
-类的功能和设计如下表：
+新增类的功能和设计如下表：
 
 
 ## 多进程HTTP服务器
@@ -95,7 +96,11 @@ HTTP服务器的单进程版的进展和To-do list如下:
     - 添加connection_finish方法，返回当前连接是否处理完成.  `√2019 11-25`
     - 添加set_connection方法用于设置新的待处理的连接，并向Connection中添加移动构造和移动赋值方法。 `√2019 11-10`
     - 添加handle方法，循环处理连接。
-4. 实现Woker类串行并发处理多个Connection：
+4. 增加config类管理服务器相关的配置：
+    - 404页面管理和自定义
+    - 启用目录默认index
+    - 允许目录浏览等等
+5. 实现Woker类串行并发处理多个Connection：
     - 加入事件处理机制
     - 使用同步信号操作
     - 使用线程异步处理每个事件
