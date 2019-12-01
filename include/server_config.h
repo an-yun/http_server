@@ -10,7 +10,11 @@ public:
 
 private:
     std::string web_root_path;
-    //一些二值设定，如是否允许目录浏览，是否启用默认index
+    /*  一些二值设定:
+    *   是否允许目录浏览
+    *   是否启用默认index
+    *   
+    */
     std::vector<bool> bool_configs;
 
     //静态设置
