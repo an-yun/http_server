@@ -93,7 +93,8 @@
         "stack": "cpp",
         "complex": "cpp",
         "rope": "cpp",
-        "slist": "cpp"
+        "slist": "cpp",
+        "__functional_base_03": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Enabled",
 
