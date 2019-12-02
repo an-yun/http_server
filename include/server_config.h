@@ -18,7 +18,9 @@ private:
     std::vector<bool> bool_configs;
 
     //静态设置
-    static const char * const default_404_response ;
+    static const char *const default_404_response;
+    static const char *const one_format_template;
+    static const char *const dir_response_template;
 };
 
 #endif
