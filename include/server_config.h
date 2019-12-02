@@ -19,8 +19,10 @@ private:
 
     //静态设置
     static const char *const default_404_response;
-    static const char *const one_format_template;
+    static const char *const one_file_template;
     static const char *const dir_response_template;
+    static const char *const dir_content_template;
+
 };
 
 #endif
