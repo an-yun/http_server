@@ -53,7 +53,6 @@ Cookie: XXXX
 这一版本的整个工作流程如下图所示
 
 ![工作流程如图](https://raw.githubusercontent.com/an-yun/http_server/master/img/单进程版HTTP服务器.jpg)
-其中涉及类的具体信息如下表：
 
 需要完成的主要工作有：
 1. HTTP 请求解析：需要解析的有请求路径，请求方法等HTTP字段。这一部分的工作虽然不难，但需要一些时间完成各个字段的细致处理。
