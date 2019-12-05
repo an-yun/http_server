@@ -14,7 +14,7 @@ TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 TESTFLAGS=-DTEST
 CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g $(TESTFLAGS)
-#-stdlib=libc++ -lpthread
+#-stdlib=libc++ -lpthread -O2
 
 CURRENT_VERSION=single_http_server
 
@@ -82,7 +82,7 @@ $(TESTDIR)/test_src.bin:$(TESTDIR)/test_src.cpp $(SRCS_TARGET) $(MKFILE_PATH)
 $(TESTDIR)/single_http_server.bin:$(TESTDIR)/single_http_server.cpp $(SRCS_TARGET) $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< $(SRCS_TARGET)  -o $@
 
-$(BINDIR): $(MKFILE_PATH)
+$(BINDIR):
 	mkdir $(BINDIR)
 
 clean:
