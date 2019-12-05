@@ -36,6 +36,6 @@ int main(int argc, char *argv[])
     }
     else
     {
-        printf("usage: ./http_server.bin web_pathserver port");
+        printf("usage: ./http_server web_path port\n");
     }
 }
