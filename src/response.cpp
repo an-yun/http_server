@@ -78,6 +78,10 @@ const char *Response::get_type(const std::string &path)
         return "text/html";
     else if (endwith(path, ".txt") || endwith(path, ".cpp"))
         return "text/plain";
+    else if (endwith(path,".css"))
+        return "text/css";
+    else if (endwith(path,".js"))
+        return "application/x-javascript";
     // else if(endwith(file_name, ".jpg"))
     //     type = "application/x-jpg";
     else

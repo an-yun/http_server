@@ -13,7 +13,9 @@ SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
 INLCUDEDIR=$(ROOT)/include
 TESTFLAGS=-DTEST
-CXXFLAGS=-std=c++17 -I$(INLCUDEDIR) -Wall -g $(TESTFLAGS)
+DEBUGFLAG=-std=c++17 -I$(INLCUDEDIR) -Wall -g $(TESTFLAGS)
+RELEASEFLAG-std=c++17 -I$(INLCUDEDIR) -O2
+CXXFLAGS=$(DEBUGFLAG)
 #-stdlib=libc++ -lpthread -O2
 
 CURRENT_VERSION=single_http_server
