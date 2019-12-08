@@ -15,7 +15,6 @@ Connection::Connection(const std::string &web_root_path, int client_st, const so
     size_t n = receive();
     request = Request(buff.c_str(),n);
     request_path = web_root_path + request.get_request_path();
-    response = Response(request_path);
 #ifdef TEST
     printf("Connection manual ok\n");
 #endif
@@ -43,7 +42,7 @@ const Request &Connection::get_request()
 
 size_t Connection::response_to_client()
 {
-    return response.response_to(client_st);
+    return response.response_to(client_st, request_path, request.get_request_path()=="");
 }
 
 size_t Connection::send(const char *content, size_t len)

@@ -4,8 +4,8 @@ std::string Response::default_404_html;
 size_t Response::len_404=0;
 const char * Response::response_head_template = "HTTP/1.1 %u OK\r\nContent-Type: %s; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
 
-Response::Response(const std::string &request_path, bool index_enabled)
-    : request_path(request_path), 
+Response::Response(bool index_enabled)
+    :
     buff(Response::max_len, ' '), 
     index_enabled(index_enabled)
 {
@@ -30,6 +30,8 @@ size_t Response::get_file_size(const std::string &file_path)
     //if(S_ISDIR(t.st_mode))
     if(S_ISREG(t.st_mode))
         return t.st_size;
+    if(S_ISDIR(t.st_mode))
+        return dir_size;
     return fail_size;
 }
 
@@ -53,19 +55,39 @@ size_t Response::write_file_to(const std::string &file_path, int client_fd)
 
 
 
-size_t Response::response_to(int client_fd)
+size_t Response::response_to(int client_fd, const std::string &request_path, bool index)
 {
-    if(validate(request_path))
+
+    //依次是文件链接，文件名，日期，大小(带单位)
+    static const char * const one_file_template = "\r\n<a href=\"%s\">%s</a>                          %s     %s";
+
+    //依次是目录名，目录名
+    static const char *const dir_content_template = "<html><head><title>Index of %s</title></head><body bgcolor=\"white\"><h1>Index of %s</h1><hr><pre><a href=\"../\">../</a></pre><hr></body></html>";
+
+    //依次是响应长度，响应内容
+    static const char *const dir_response_template = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
+
+    //响应头buff
+    static char head_buff[128]; 
+    std::string response_path = request_path;
+    if(validate(response_path))
     {
-        if(index_enabled && endwith(request_path,"/"))
+        if(index_enabled && index)
         {
-            std::string index_path = request_path + "index.html";
+            //处理默认目录的index
+            std::string index_path = response_path + "index.html";
             if(validate(index_path))
-                request_path = index_path;
+                response_path = index_path;
         }
-        size_t content_len = get_file_size(request_path);
-        if (content_len != fail_size)
-            return response_head_to(client_fd,200,get_type(request_path),content_len) + response_body_to(client_fd,request_path);
+        size_t content_len = get_file_size(response_path);
+        if(content_len == dir_size)
+        {
+            DIR *dp;
+            struct dirent *dirp;
+
+        }
+        else if (content_len != fail_size)
+            return response_head_to(client_fd,200,get_type(response_path),content_len) + response_body_to(client_fd,response_path);
     }
 
     return response_head_to(client_fd, 404,"text/html", len_404) + response_body_to(client_fd,default_404_html);

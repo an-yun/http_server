@@ -4,3 +4,5 @@ test/*.bin
 .vscode/ipch
 build/*
 bin/*
+ls.c
+apue.h
