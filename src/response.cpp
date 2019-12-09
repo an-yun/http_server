@@ -75,7 +75,7 @@ size_t Response::response_to(int client_fd, const std::string &web_root_path, co
     std::string response_path = web_root_path + request_path;
     if(validate(response_path))
     {
-        if(index_enabled && request_path=="")
+        if(index_enabled && request_path=="/")
         {
             //处理默认目录的index
             std::string index_path = response_path + "index.html";
