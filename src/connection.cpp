@@ -10,11 +10,11 @@ Connection::Connection()
 Connection::Connection(const std::string &web_root_path, int client_st, const sockaddr_in &client_address)
     : client_st(client_st),
      client_address(client_address),
-     buff(Connection::max_len,' ')
+     buff(Connection::max_len,' '),
+     web_root_path(web_root_path)
 {
     size_t n = receive();
     request = Request(buff.c_str(),n);
-    request_path = web_root_path + request.get_request_path();
 #ifdef TEST
     printf("Connection manual ok\n");
 #endif
@@ -25,7 +25,7 @@ Connection::Connection(Connection &&con) noexcept
       buff(std::move(con.buff)),
       request(std::move(con.request)),
       response(std::move(con.response)),
-      request_path(std::move(con.request_path))
+      web_root_path(std::move(con.web_root_path))
       
 {
     client_address = con.client_address;
@@ -42,7 +42,7 @@ const Request &Connection::get_request()
 
 size_t Connection::response_to_client()
 {
-    return response.response_to(client_st, request_path, request.get_request_path()=="");
+    return response.response_to(client_st, web_root_path, request.get_request_path());
 }
 
 size_t Connection::send(const char *content, size_t len)
@@ -67,9 +67,9 @@ std::string Connection::get_client_ip() const
     return inet_ntoa(client_address.sin_addr);
 }
 
-std::string Connection::get_request_path() const
+const std::string &Connection::get_request_path() const
 {
-    return request_path;
+    return request.get_request_path();
 }
 
 bool Connection::close()

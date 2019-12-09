@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
-
+#include <string.h>
 #include "ioutils.h"
 
 class Response
@@ -29,7 +29,7 @@ class Response
     //获取响应类型
     const char *get_type(const std::string &path);
     //向client_fd发送响应头部
-    size_t response_head_to(int client_fd, size_t reponse_code, const char *type, size_t content_len);
+    size_t response_head_to(int client_fd, size_t reponse_code, const char *type, size_t content_len, const std::string &location="");
     //向client_fd发送响应主体
     size_t response_body_to(int client_fd, const std::string &file_path);
 
@@ -41,10 +41,11 @@ class Response
     Response &operator=(Response &&) = default;
 
     //向client_fd发送响应
-    size_t response_to(int client_fd, const std::string &request_path, bool index);
+    size_t response_to(int client_fd, const std::string &web_root_path, const std::string &request_path);
+    size_t redirect_to(int client_fd, const std::string &redirect_path);
 
     // 共用响应设置
-    static void set_default_404(const std::string &default_index);
+    static void set_default_404(const std::string &default_404);
 };
 
 #endif

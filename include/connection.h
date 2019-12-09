@@ -26,7 +26,7 @@ public:
   Connection();
 #endif
 
-  Connection(const std::string &request_path, int client_st, const sockaddr_in &client_address);
+  Connection(const std::string &web_root_path, int client_st, const sockaddr_in &client_address);
   Connection(const Connection &) = delete;
   Connection& operator=(Connection &) = delete;
 
@@ -43,7 +43,7 @@ public:
   size_t send(const std::string &content);
   size_t receive(size_t len = max_len);
   std::string get_client_ip() const;
-  std::string get_request_path() const;
+  const std::string &get_request_path() const;
 
   ~Connection();
 
@@ -54,7 +54,7 @@ private:
   Request request;
   Response response;
 
-  std::string request_path;
+  std::string web_root_path;
   bool close();
 };
 

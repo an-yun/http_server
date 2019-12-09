@@ -2,7 +2,7 @@
 
 std::string Response::default_404_html;
 size_t Response::len_404=0;
-const char * Response::response_head_template = "HTTP/1.1 %u OK\r\nContent-Type: %s; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
+const char * Response::response_head_template = "HTTP/1.1 %u OK\r\nContent-Type: %s; charset=UTF-8\r\nContent-Length:%lu\r\n\r\n";
 
 Response::Response(bool index_enabled)
     :
@@ -55,24 +55,27 @@ size_t Response::write_file_to(const std::string &file_path, int client_fd)
 
 
 
-size_t Response::response_to(int client_fd, const std::string &request_path, bool index)
+size_t Response::response_to(int client_fd, const std::string &web_root_path, const std::string &request_path)
 {
 
-    //依次是文件链接，文件名，日期，大小(带单位)
-    static const char * const one_file_template = "\r\n<a href=\"%s\">%s</a>                          %s     %s";
+    //依次是文件链接，文件名，补齐空格，日期，大小(带单位)
+    static const char * const one_file_template = "\r\n<a href=\"%s\">%s</a>%s                          %-16s     %16s";
+
+    static const char dir_content_end[] = "</pre><hr></body></html>";
 
     //依次是目录名，目录名
-    static const char *const dir_content_template = "<html><head><title>Index of %s</title></head><body bgcolor=\"white\"><h1>Index of %s</h1><hr><pre><a href=\"../\">../</a></pre><hr></body></html>";
+    static const char *const dir_content_begin = "<html><head><title>Index of %s</title></head><body bgcolor=\"white\"><h1>Index of %s</h1><hr><pre><a href=\"../\">../</a>";
 
-    //依次是响应长度，响应内容
-    static const char *const dir_response_template = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%u\r\n\r\n";
+    //依次是响应长度
+    static const char *const dir_response_template = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length:%lu\r\n\r\n";
 
     //响应头buff
-    static char head_buff[128]; 
-    std::string response_path = request_path;
+    static char head_buff[128];
+    static std::string blank(24, ' ');
+    std::string response_path = web_root_path + request_path;
     if(validate(response_path))
     {
-        if(index_enabled && index)
+        if(index_enabled && request_path=="")
         {
             //处理默认目录的index
             std::string index_path = response_path + "index.html";
@@ -82,25 +85,64 @@ size_t Response::response_to(int client_fd, const std::string &request_path, boo
         size_t content_len = get_file_size(response_path);
         if(content_len == dir_size)
         {
-            println("open dir",response_path);
+            if(response_path.back() != '/')
+                return redirect_to(client_fd, request_path+"/");
             DIR *dp;
             struct dirent *dirp;
             if((dp = opendir(response_path.c_str())) == NULL)
                 println("open dir false");
             else
             {
-                println("ok");
-                while( (dirp = readdir(dp)) != NULL )
-                    printf("%s\n", dirp->d_name);
-                closedir(dp);
-            }
+                //生成模版
+                char *char_buff = const_cast<char *>(buff.data());
+                // std::string title_string = "/" + request_path;
+                size_t n = sprintf(char_buff, dir_content_begin, request_path.c_str(), request_path.c_str());
 
+                while( (dirp = readdir(dp)) != NULL )
+                {
+                    if (n < buff.size() && n + 512 > buff.size())
+                    {
+                        buff.resize(buff.size() + 1024);
+                        char_buff = const_cast<char *>(buff.data());
+                    }
+                    if(dirp->d_name[0]== '.')
+                        continue;
+                    std::string file_path = response_path + "/" + dirp->d_name;
+                    auto length = get_file_size(file_path);
+                    auto name_len = strlen(dirp->d_name);
+                    blank[24-name_len] = '\0';
+                    if (length != dir_size)
+                    {
+                        if(length >= (1<<30))
+                            sprintf(head_buff, "%.1f GB", length*1.0/(1<<30));
+                        else if(length >= (1<<20))
+                            sprintf(head_buff, "%.1f MB", length*1.0/(1<<20));
+                        else if(length >= (1<<10))
+                            sprintf(head_buff, "%.1f KB", length*1.0/(1<<10));
+                        else sprintf(head_buff, "%zu B", length);
+                        n += sprintf(char_buff + n, one_file_template, dirp->d_name, dirp->d_name,blank.c_str(), "2019-12-9", head_buff);
+                    }
+                    else
+                        n += sprintf(char_buff + n, one_file_template, dirp->d_name, dirp->d_name, blank.c_str(),"2019-12-9", "-");
+                    blank[24-name_len] = ' ';
+                }
+                closedir(dp);
+                size_t head_n = sprintf(head_buff, dir_response_template, n+24);
+                write(client_fd, head_buff, head_n);
+                write(client_fd, char_buff, n);
+                write(client_fd, dir_content_end, 24);
+                return head_n + n + 24;
+            }
         }
         else if (content_len != fail_size)
             return response_head_to(client_fd,200,get_type(response_path),content_len) + response_body_to(client_fd,response_path);
     }
-
     return response_head_to(client_fd, 404,"text/html", len_404) + response_body_to(client_fd,default_404_html);
+}
+
+size_t Response::redirect_to(int client_fd, const std::string &redirect_path)
+{
+    return response_head_to(client_fd, 301, "text/html",169,redirect_path);
 }
 
 const char *Response::get_type(const std::string &path)
@@ -119,10 +161,12 @@ const char *Response::get_type(const std::string &path)
     else
         return ".*";
 }
-size_t Response::response_head_to(int client_fd, size_t reponse_code, const char *type,  size_t content_len)
+size_t Response::response_head_to(int client_fd, size_t reponse_code, const char *type,  size_t content_len, const std::string &location)
 {
     char *char_buff = const_cast<char *>(buff.data());
     size_t n = sprintf(char_buff, response_head_template, reponse_code, type, content_len);
+    if(location != "")
+        n += sprintf(char_buff + n-2, "location:%s\r\n\r\n",location.c_str());
     write(client_fd, char_buff, n);
     return 0;
 }
