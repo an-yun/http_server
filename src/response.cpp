@@ -82,8 +82,18 @@ size_t Response::response_to(int client_fd, const std::string &request_path, boo
         size_t content_len = get_file_size(response_path);
         if(content_len == dir_size)
         {
+            println("open dir",response_path);
             DIR *dp;
             struct dirent *dirp;
+            if((dp = opendir(response_path.c_str())) == NULL)
+                println("open dir false");
+            else
+            {
+                println("ok");
+                while( (dirp = readdir(dp)) != NULL )
+                    printf("%s\n", dirp->d_name);
+                closedir(dp);
+            }
 
         }
         else if (content_len != fail_size)

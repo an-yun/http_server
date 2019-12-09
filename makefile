@@ -35,7 +35,7 @@ all:$(SRCS_TARGET) $(TESTDIR)/$(CURRENT_VERSION).bin $(BINDIR)
 
 
 run:all
-	$(BINDIR)/http_server web 8080
+	$(BINDIR)/http_server web 8081
 
 test:$(TEST_TARGET)
 	@echo makefile in $(MKFILE_PATH)
