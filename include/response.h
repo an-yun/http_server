@@ -32,7 +32,10 @@ class Response
     size_t response_head_to(int client_fd, size_t reponse_code, const char *type, size_t content_len, const std::string &location="");
     //向client_fd发送响应主体
     size_t response_body_to(int client_fd, const std::string &file_path);
-
+    //让client_fd重定向到redirect_path
+    size_t redirect_to(int client_fd, const std::string &redirect_path);
+    //向client_fd发送目录浏览响应
+    size_t response_dir_to(int client_fd, const std::string &dir_path, const std::string &request_path);
 
   public:
     static const size_t max_len = 1024;
@@ -42,7 +45,7 @@ class Response
 
     //向client_fd发送响应
     size_t response_to(int client_fd, const std::string &web_root_path, const std::string &request_path);
-    size_t redirect_to(int client_fd, const std::string &redirect_path);
+
 
     // 共用响应设置
     static void set_default_404(const std::string &default_404);

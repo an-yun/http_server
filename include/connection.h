@@ -43,7 +43,7 @@ public:
   size_t send(const std::string &content);
   size_t receive(size_t len = max_len);
   std::string get_client_ip() const;
-  const std::string &get_request_path() const;
+  const std::string & get_request_path() const;
 
   ~Connection();
 

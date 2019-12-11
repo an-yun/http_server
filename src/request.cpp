@@ -15,7 +15,7 @@ Request::Request(const string & requst_str)
     parse_request(requst_str.c_str(), requst_str.size());
 }
 
-std::string Request::get_request_path() const
+const std::string &Request::get_request_path() const
 {
     return request_path;
 }

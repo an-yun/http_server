@@ -47,7 +47,7 @@ class Request
         Request &operator=(Request &&) = default;
 
         size_t parse_request(const char * request_str, size_t n);
-        string get_request_path() const;
+        const std::string &get_request_path() const;
         const map<string, string> &get_request_parameter();
         enum RequestMethod get_request_type();
         string get_error_message();

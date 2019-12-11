@@ -15,7 +15,7 @@ private:
     *   是否启用默认index
     *   
     */
-    std::vector<bool> bool_configs;
+    uint32_t bool_configs;
 
     //静态设置
     static const char *const default_404_response;
