@@ -4,7 +4,6 @@
             "name": "Linux",
             "browse": {
                 "path": [
-                    "/usr/lib/llvm-7/include/c++/v1",
                     "/usr/include",
                     "${workspaceFolder}",
                     "${workspaceFolder}/include"
@@ -12,13 +11,11 @@
                 "limitSymbolsToIncludedHeaders": false
             },
             "includePath": [
-                "/usr/lib/llvm-7/include/c++/v1",
                 "/usr/include",
                 "${workspaceFolder}",
                 "${workspaceFolder}/include"
             ],
             "defines": ["TEST=1"],
-            "compilerPath": "/usr/bin/clang++",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64"
