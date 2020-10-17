@@ -8,7 +8,6 @@
 #include <signal.h>
 #include <string>
 #include <sys/socket.h>
-#include <sys/epoll.h>
 
 #include "ioutils.h"
 #include "connection.h"

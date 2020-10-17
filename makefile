@@ -11,10 +11,10 @@ BUILDDIR=$(ROOT)/build
 BINDIR=$(ROOT)/bin
 SRCDIR=$(ROOT)/src
 TESTDIR=$(ROOT)/test
-INLCUDEDIR=$(ROOT)/include
+INLCUDEDIR=-I$(ROOT)/include -I$(ROOT)/src
 TESTFLAGS=-DTEST
-DEBUGFLAG=-std=c++17 -I$(INLCUDEDIR) -Wall -g $(TESTFLAGS)
-RELEASEFLAG-std=c++17 -I$(INLCUDEDIR) -O2
+DEBUGFLAG=-std=c++17 $(INLCUDEDIR) -Wall -g $(TESTFLAGS)
+RELEASEFLAG-std=c++17 $(INLCUDEDIR) -O2
 CXXFLAGS=$(DEBUGFLAG)
 #-stdlib=libc++ -lpthread -O2
 
@@ -40,25 +40,25 @@ run:all
 test:$(TEST_TARGET)
 	@echo makefile in $(MKFILE_PATH)
 
-$(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
+$(SRCDIR)/ioutils.o:$(SRCDIR)/ioutils.cpp $(SRCDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/ioutils.cpp -o $@
 
-$(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(INLCUDEDIR)/fd_transfer.h $(MKFILE_PATH)
+$(SRCDIR)/fd_transfer.o:$(SRCDIR)/fd_transfer.cpp $(SRCDIR)/fd_transfer.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/fd_transfer.cpp -o $@
 
-$(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(INLCUDEDIR)/request.h $(MKFILE_PATH)
+$(SRCDIR)/request.o:$(SRCDIR)/request.cpp $(SRCDIR)/request.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/request.cpp -o $@
 
-$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(INLCUDEDIR)/response.h $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
+$(SRCDIR)/response.o:$(SRCDIR)/response.cpp $(SRCDIR)/response.h $(SRCDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/response.cpp -o $@
 
-$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/response.h $(MKFILE_PATH)
+$(SRCDIR)/connection.o:$(SRCDIR)/connection.cpp $(SRCDIR)/connection.h $(SRCDIR)/request.h $(SRCDIR)/response.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/connection.cpp -o $@
 
-$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(INLCUDEDIR)/worker.h $(INLCUDEDIR)/connection.h $(MKFILE_PATH)
+$(SRCDIR)/worker.o:$(SRCDIR)/worker.cpp $(SRCDIR)/worker.h $(SRCDIR)/connection.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/worker.cpp -o $@
 
-$(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(INLCUDEDIR)/server.h $(INLCUDEDIR)/connection.h $(INLCUDEDIR)/request.h $(INLCUDEDIR)/ioutils.h $(MKFILE_PATH)
+$(SRCDIR)/server.o:$(SRCDIR)/server.cpp $(SRCDIR)/server.h $(SRCDIR)/connection.h $(SRCDIR)/request.h $(SRCDIR)/ioutils.h $(MKFILE_PATH)
 	$(CXX) $(CXXFLAGS) -c $(SRCDIR)/server.cpp -o $@
 
 

@@ -6,7 +6,9 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifndef __APPLE__
 #include <sys/epoll.h>
+
 #include <errno.h>
 
 #define MAXEVENTS 64
@@ -79,10 +81,11 @@ create_and_bind (char *port)
 
   return sfd;
 }
-
+#endif
 int
 main (int argc, char *argv[])
 {
+  #ifndef __APPLE__
   int sfd, s;
   int efd;
   struct epoll_event event;
@@ -262,6 +265,6 @@ main (int argc, char *argv[])
   free (events);
 
   close (sfd);
-
+#endif
   return EXIT_SUCCESS;
 }

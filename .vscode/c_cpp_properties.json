@@ -15,9 +15,12 @@
                 "/usr/lib/llvm-7/include/c++/v1",
                 "/usr/include",
                 "${workspaceFolder}",
-                "${workspaceFolder}/include"
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src"
             ],
-            "defines": ["TEST=1"],
+            "defines": [
+                "TEST=1"
+            ],
             "compilerPath": "/usr/bin/clang++",
             "cStandard": "c11",
             "cppStandard": "c++17",
